@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expected Value Calculator</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Expected Value Calculator</h1>
+</header>
+
+<div class="container">
+
+    <div class="calculator-card">
+        <h2>Tính Expected Value (EV)</h2>
+
+        <!-- DANH SÁCH CÁC DÒNG GIÁ TRỊ -->
+        <div id="rows">
+
+            <!-- 1 dòng mẫu -->
+            <div class="input-group ev-row">
+                <label>Giá trị (x)</label>
+                <input type="number" class="value">
+
+                <label>Xác suất (p)</label>
+                <input type="number" class="probability" step="0.01" min="0" max="1">
+            </div>
+
+        </div>
+
+        <!-- NÚT THÊM DÒNG -->
+        <button id="addRow">+ Thêm giá trị</button>
+
+        <div id="result">Expected Value: --</div>
+    </div>
+
+    <div class="content">
+        <h2>Expected Value là gì?</h2>
+        <p>
+            Expected Value (EV) là giá trị kỳ vọng của một quyết định,
+            thường được dùng trong tài chính, đầu tư, trading và xác suất.
+        </p>
+
+        <div class="formula">
+            <p><strong>EV = Σ (x × p)</strong></p>
+        </div>
+
+        <h3>Ví dụ</h3>
+        <p>
+            Nếu bạn có 40% cơ hội lãi 100 và 60% cơ hội lỗ 50:
+        </p>
+        <p>
+            EV = 100 × 0.4 − 50 × 0.6 = 10
+        </p>
+    </div>
+
+</div>
+
+<footer>
+    <p>© 2026 - Expected Value Calculator</p>
+</footer>
+
+<script src="./calculator.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+omni-calculators/
+├── index.html              # Homepage (sau này list các calculator)
+├── css/
+│   └── style.css           # CSS dùng chung
+├── shared/
+│   └── template.html       # HTML template gốc
+├── triangle-area/
+│   ├── index.html          # Calculator diện tích tam giác
+│   └── calculator.js       # Công thức + JS riêng
+└── js/
+    └── search.js           # (optional)
+
+

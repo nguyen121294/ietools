@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IEtools – Lean Engineering Calculators</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Tailwind config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS chung -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+
+<div id="header-placeholder"></div>
+
+<main class="max-w-7xl mx-auto px-6 py-12">
+  <h1 class="text-4xl font-bold mb-6 text-white">IEtools</h1>
+
+  <!-- Grid tools -->
+  <!-- Tool categories intro -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- Productivity -->
+    <div class="ie-card flex flex-col">
+        <h3 class="ie-card-title">Productivity Tools</h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 flex-1">
+        Các công cụ tính nhanh, hỗ trợ kỹ sư ra quyết định,
+        giảm thời gian tính toán thủ công và tăng hiệu suất làm việc.
+        </p>
+        <a
+        href="/categories/productivity.html"
+        class="mt-6 inline-flex items-center justify-center
+                rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white
+                hover:bg-primary/90 transition">
+        Xem Productivity Tools →
+        </a>
+    </div>
+
+    <!-- Lean -->
+    <div class="ie-card flex flex-col">
+        <h3 class="ie-card-title">Lean Tools</h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 flex-1">
+        Các công cụ Lean Manufacturing như takt time,
+        line balancing, OEE… giúp tối ưu quy trình sản xuất.
+        </p>
+        <a
+        href="/lean/index.html"
+        class="mt-6 inline-flex items-center justify-center
+                rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white
+                hover:bg-primary/90 transition">
+        Xem Lean Tools →
+        </a>
+    </div>
+
+    <!-- Inventory / Supply Chain -->
+    <div class="ie-card flex flex-col">
+        <h3 class="ie-card-title">Inventory & Supply Chain</h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 flex-1">
+        Công cụ hỗ trợ quản lý tồn kho, EOQ, safety stock,
+        và ra quyết định trong chuỗi cung ứng.
+        </p>
+        <a
+        href="/inventory/index.html"
+        class="mt-6 inline-flex items-center justify-center
+                rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white
+                hover:bg-primary/90 transition">
+        Xem Inventory Tools →
+        </a>
+    </div>
+
+    </div>
+
+
+<div id="ie-footer"></div>
+
+<script src="/js/layout.js"></script>
+</body>
+</html>

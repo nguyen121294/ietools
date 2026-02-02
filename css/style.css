@@ -1,0 +1,152 @@
+/* =========================
+   GLOBAL
+========================= */
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.ie-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.dark .ie-card {
+    background: rgba(30, 41, 59, 0.4);
+    border-color: #1f2937;
+}
+
+/* =========================
+   TITLES
+========================= */
+
+.ie-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #0f172a;
+}
+
+.dark .ie-card-title {
+    color: #fff;
+}
+
+.ie-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.ie-input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #475569;
+}
+
+.dark .ie-input-label {
+    color: #cbd5f5;
+}
+
+.ie-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    background: #f1f5f9;
+    border: 1px solid #e5e7eb;
+    outline: none;
+}
+
+.dark .ie-input {
+    background: #020617;
+    border-color: #334155;
+    color: white;
+}
+
+.ie-input:focus {
+    border-color: #137fec;
+    box-shadow: 0 0 0 2px rgba(19,127,236,.25);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.ie-button {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: #137fec;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+}
+
+.ie-button:hover {
+    background: #0f6ad1;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.ie-result {
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #137fec;
+}
+
+/* =========================
+   FORMULA
+========================= */
+
+.ie-formula {
+    background: #f1f5f9;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+}
+
+.dark .ie-formula {
+    background: #020617;
+    border-color: #1f2937;
+}
+
+/* =========================
+   FAQ
+========================= */
+
+.ie-faq details {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 0;
+}
+
+.dark .ie-faq details {
+    border-color: #1f2937;
+}
+
+.ie-faq summary {
+    cursor: pointer;
+    font-weight: 600;
+}
