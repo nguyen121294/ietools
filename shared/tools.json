@@ -22,17 +22,17 @@
       "id": "triangle-area",
       "name": "Triangle Area Calculator",
       "category": "productivity",
-      "url": "/triangle-area/index.html",
+      "url": "/srctools/triangle-area/index.html",
       "description": "Calculate triangle area using Heron formula",
       "premium": false
     },
     {
       "id": "line-balancing",
       "name": "Line Balancing",
-      "category": "lean",
-      "url": "/line-balancing/index.html",
+      "category": "productivity",
+      "url": "/srctools/line-balancing/index.html",
       "description": "RPW & heuristic line balancing",
-      "premium": true
+      "premium": false
     }
   ]
 }

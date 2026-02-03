@@ -9,7 +9,7 @@
 async function loadProductivityTools() {
 
   // 1️⃣ Load file config trung tâm (chứa categories + tools)
-  const res = await fetch("/shared/tools.json");
+  const res = await fetch("../shared/tools.json");
   const data = await res.json();
 
   // 2️⃣ Lấy container nơi sẽ render danh sách tool
