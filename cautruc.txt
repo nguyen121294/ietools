@@ -1,13 +1,30 @@
-omni-calculators/
-├── index.html              # Homepage (sau này list các calculator)
-├── css/
-│   └── style.css           # CSS dùng chung
-├── shared/
-│   └── template.html       # HTML template gốc
-├── triangle-area/
-│   ├── index.html          # Calculator diện tích tam giác
-│   └── calculator.js       # Công thức + JS riêng
-└── js/
-    └── search.js           # (optional)
 
-
+IEtools/                     ← repo GitHub
+│
+├─ index.html                ← HOMEPAGE (bắt buộc)
+│
+├─ css/
+│   └─ style.css             ← CSS chung (ie-card, theme, etc.)
+│
+├─ js/
+│   ├─ layout.js              ← auto-load header + footer
+│   ├─ productivity.js        ← load tools theo category
+│   └─ lean.js                ← (sau này) lean tools
+│
+├─ shared/
+│   ├─ header.html            ← header dùng chung
+│   ├─ footer.html            ← footer dùng chung
+│   └─ tools.json             ← config tools + menu
+│
+├─ categories/
+│   └─productivity.html             ← Productivity Tools page
+│	└─lean.html						← Lean Tools page
+│	└─inventory.html				← Inventory Tools page
+│         
+├─ srctools/
+│	└─triangle-area/
+│   	└─ index.html             ← tool chi tiết
+│	└─expected-value/
+│   	└─ index.html             ← tool chi tiết
+│
+└─ README.md

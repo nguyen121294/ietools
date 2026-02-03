@@ -33,6 +33,23 @@
       "url": "/srctools/line-balancing/index.html",
       "description": "RPW & heuristic line balancing",
       "premium": false
+    },
+
+    {
+      "id": "eoq",
+      "name": "EOQ Calculator",
+      "category": "inventory",
+      "url": "/srctools/eoq/index.html",
+      "description": "Tính lượng đặt hàng kinh tế tối ưu (Economic Order Quantity)",
+      "premium": false
+    }, 
+    {
+      "id": "joint-eoq",
+      "name": "Joint EOQ Calculator",
+      "category": "inventory",
+      "url": "/srctools/joint-eoq/index.html",
+      "description": "Tính lượng đặt hàng chu kỳ đặt hàng chung nhiều mặt hàng",
+      "premium": false
     }
   ]
 }

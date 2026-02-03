@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[TÊN TOOL] - [MÔ TẢ NGẮN]</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Font: Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- MathJax cho công thức toán đẹp (nếu tool có công thức) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+
+<!-- HEADER placeholder -->
+<div id="ie-header"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Tiêu đề tool -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight">[TÊN TOOL ĐẦY ĐỦ]</h1>
+        <p class="mt-2 text-slate-500 dark:text-slate-400">
+            [MÔ TẢ NGẮN 1-2 CÂU VỀ TOOL, MỤC ĐÍCH SỬ DỤNG]
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Phần nhập liệu (Calculator Card) -->
+        <div class="ie-card">
+            <h2 class="ie-card-title">Thông số đầu vào</h2>
+
+            <!-- Các field input - thêm/xóa tùy tool -->
+            <label class="ie-input-label">Label 1</label>
+            <input type="number" class="ie-input" id="input1" placeholder="Ví dụ: ..." min="0">
+
+            <label class="ie-input-label mt-3">Label 2</label>
+            <input type="number" class="ie-input" id="input2" placeholder="Ví dụ: ..." min="0">
+
+            <!-- Có thể thêm select, checkbox, textarea nếu cần -->
+            <!-- <label class="ie-input-label mt-3">Đơn vị</label>
+            <select class="ie-input" id="unit">
+                <option value="năm">Năm</option>
+                <option value="tháng">Tháng</option>
+            </select> -->
+
+            <button class="ie-button w-full mt-6" onclick="calculate()">
+                Tính toán
+            </button>
+
+            <div id="result" class="ie-result mt-6 text-lg"></div>
+        </div>
+
+        <!-- Phần giải thích + kết quả chi tiết -->
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- Giới thiệu ngắn gọn -->
+            <div class="ie-card">
+                <h3 class="ie-section-title">[TÊN TOOL] là gì?</h3>
+                <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    [MÔ TẢ CHI TIẾT HƠN: công dụng, giả định, khi nào nên dùng, lợi ích...]
+                </p>
+            </div>
+
+            <!-- Công thức chính (dùng MathJax) -->
+            <div class="ie-card">
+                <h3 class="ie-section-title">Công thức</h3>
+                <div class="ie-formula text-center text-lg py-4">
+                    \[ [CÔNG THỨC CHÍNH] \]
+                </div>
+                <div class="mt-4 space-y-2 text-sm">
+                    <p><strong>Biến 1</strong> = [giải thích]</p>
+                    <p><strong>Biến 2</strong> = [giải thích]</p>
+                    <!-- Thêm biến khác nếu cần -->
+                </div>
+
+                <!-- Ví dụ minh họa -->
+                <h4 class="font-semibold mt-6 mb-2">Ví dụ minh họa</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    [Dữ liệu ví dụ]
+                </p>
+                <div class="ie-formula mt-3 text-center">
+                    \[ [CÔNG THỨC VỚI SỐ CỤ THỂ] \approx [KẾT QUẢ] \]
+                </div>
+            </div>
+
+            <!-- Kết quả chi tiết sẽ được JS inject vào đây -->
+            <div id="detailed-results" class="space-y-6"></div>
+
+            <!-- FAQ (tùy chọn, có thể bỏ nếu tool đơn giản) -->
+            <div class="ie-card">
+                <h3 class="ie-section-title">Câu hỏi thường gặp</h3>
+                <div class="ie-faq space-y-3 mt-4">
+                    <details>
+                        <summary>Câu hỏi 1?</summary>
+                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            Trả lời...
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Câu hỏi 2?</summary>
+                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            Trả lời...
+                        </p>
+                    </details>
+                    <!-- Thêm details khác nếu cần -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- FOOTER placeholder -->
+<div id="ie-footer"></div>
+
+<!-- Scripts -->
+<script src="/js/layout.js"></script>
+<script src="./calculator.js"></script>
+
+</body>
+</html>
