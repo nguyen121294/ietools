@@ -1,0 +1,45 @@
+{
+  "plants": {
+    "P1": {
+      "capacity": 1000,
+      "cost_to_w": {"W1": 5, "W2": 3, "W3": 4, "W4": 6}
+    },
+    "P2": {
+      "capacity": 1500,
+      "cost_to_w": {"W1": 4, "W2": 5, "W3": 2, "W4": 3}
+    },
+    "P3": {
+      "capacity": 1200,
+      "cost_to_w": {"W1": 6, "W2": 4, "W3": 5, "W4": 2}
+    }
+  },
+  "warehouses": {
+    "W1": {
+      "fixed_cost": 10000,
+      "capacity": 2000,
+      "cost_to_c": {"C1": 2, "C2": 3, "C3": 1, "C4": 4, "C5": 5}
+    },
+    "W2": {
+      "fixed_cost": 12000,
+      "capacity": 1800,
+      "cost_to_c": {"C1": 3, "C2": 2, "C3": 4, "C4": 1, "C5": 3}
+    },
+    "W3": {
+      "fixed_cost": 9000,
+      "capacity": 2200,
+      "cost_to_c": {"C1": 1, "C2": 4, "C3": 2, "C4": 5, "C5": 2}
+    },
+    "W4": {
+      "fixed_cost": 11000,
+      "capacity": 1900,
+      "cost_to_c": {"C1": 4, "C2": 1, "C3": 3, "C4": 2, "C5": 4}
+    }
+  },
+  "customers": {
+    "C1": {"demand": 500},
+    "C2": {"demand": 600},
+    "C3": {"demand": 700},
+    "C4": {"demand": 400},
+    "C5": {"demand": 800}
+  }
+}
