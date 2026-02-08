@@ -1,47 +1,94 @@
 <!-- ===== HEADER (AUTO LOAD) ===== -->
 <header
-  class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800
-         bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+  class="sticky top-0 z-50 w-full
+         border-b border-slate-200 dark:border-slate-800
+         bg-white/90 dark:bg-background-dark/85
+         backdrop-blur-md">
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 items-center justify-between">
+    <div class="flex flex-col gap-2">
 
-      <!-- Logo -->
-      <div class="flex items-center gap-3">
+      <!-- Logo / Brand -->
+      <a href="/index.html" class="flex items-center gap-3 group">
+        <!-- Icon -->
+        <div
+          class="flex items-center justify-center
+                h-10 px-5
+                rounded-2xl
+                bg-gradient-to-br from-indigo-500 to-cyan-500
+                text-white font-extrabold text-sm
+                shadow-md
+                group-hover:scale-105 transition">
+          IE & SC Tools
+        </div>
+        
+        <!-- Text -->
         <div class="flex flex-col">
-          <h1 class="text-md font-bold leading-none tracking-tight text-white">
-            IEtools
+          <h1
+            class="text-base font-extrabold tracking-tight
+                   text-slate-900 dark:text-white
+                   group-hover:text-indigo-600 transition">
+            Industrial Engineering & Supply Chain tools
           </h1>
-          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+          <p
+            class="text-[10px] uppercase tracking-wider
+                   text-slate-500 dark:text-slate-400 font-medium">
             Engineering Hub
           </p>
         </div>
-      </div>
 
-      <!-- Navigation (auto from tools.json) -->
-      <nav id="main-nav" class="hidden md:flex items-center gap-8 h-full">
-        <!-- JS sẽ inject menu vào đây -->
-      </nav>
 
-      <!-- Right actions -->
-      <div class="flex items-center gap-4">
-        
-
-        
         <!-- Search -->
-        <div class="relative hidden sm:block">
+        <div class="relative hidden sm:block ml-auto">
           <input
             type="text"
             placeholder="Search tools..."
-            class="w-48 lg:w-64 rounded-full border-none
-                  bg-slate-100 dark:bg-slate-800
-                  py-1.5 pl-9 pr-4 text-xs
-                  focus:ring-2 focus:ring-primary
-                  dark:text-white">
+            class="w-48 lg:w-64 rounded-full
+                   bg-slate-100 dark:bg-slate-800
+                   py-1.5 pl-9 pr-4 text-xs
+                   text-slate-700 dark:text-white
+                   placeholder-slate-400
+                   focus:outline-none
+                   focus:ring-2 focus:ring-indigo-500">
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z" />
+          </svg>
         </div>
+
+        
+      </a>
+
+
+
+
+      <!-- Navigation -->
+      <nav
+        id="main-nav"
+        class="hidden md:flex flex-wrap items-center gap-x-8 gap-y-2
+              py-2
+              text-sm font-medium
+              text-slate-600 dark:text-slate-300">
+        <!-- JS inject -->
+      </nav>
+
+      <div
+        id="breadcrumb"
+        class="hidden md:block text-xs text-slate-500 dark:text-slate-400 py-1">
+      </div>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-4">
+
 
 
       </div>
     </div>
   </div>
+
+  <!-- Accent line -->
+  <div class="h-[2px] w-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-transparent"></div>
 </header>

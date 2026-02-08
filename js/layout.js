@@ -1,10 +1,25 @@
 /**
  * layout.js
  * ------------------------------------
+ * - Enforce body class
  * - Load header.html
- * - Sinh navigation từ tools.json
- * - Tự active menu theo URL
+ * - Build navigation from tools.json
+ * - Auto inject data-category from tools.json
+ * - Highlight nav by category
+ * - Build breadcrumb
  */
+
+/* ========= ENFORCE BODY CLASS ========= */
+function enforceBodyClass() {
+  document.body.classList.add(
+    "bg-background-light",
+    "dark:bg-background-dark",
+    "text-slate-900",
+    "dark:text-slate-100",
+    "min-h-screen",
+    "font-display"
+  );
+}
 
 /* ========= LOAD HEADER ========= */
 async function loadHeader() {
@@ -17,37 +32,82 @@ async function loadHeader() {
   }
 }
 
-/* ========= BUILD NAV ========= */
-async function buildNavigation() {
+/* ========= MAIN INIT ========= */
+document.addEventListener("DOMContentLoaded", async () => {
+
+  enforceBodyClass();
+  await loadHeader();
+
   const res = await fetch("/shared/tools.json");
   const data = await res.json();
 
-  const nav = document.getElementById("main-nav");
-  if (!nav) return;
-
   const currentPath = window.location.pathname;
 
-  data.categories.forEach(cat => {
-    const link = document.createElement("a");
-    link.href = cat.url;
-    link.textContent = cat.name;
+  /* ========= DETECT TOOL ========= */
+  const currentTool = data.tools.find(t =>
+    currentPath.endsWith(t.url)
+  );
 
-    const isActive = currentPath.startsWith(cat.url);
+  /* ========= DETECT CATEGORY ========= */
+  /* ========= DETECT CATEGORY ========= */
+  let currentCategory = null;
 
-    link.className = `
-      text-sm font-medium h-full flex items-center
-      transition-colors
-      ${isActive
-        ? "text-primary border-b-2 border-primary"
-        : "text-slate-600 dark:text-slate-400 hover:text-primary"}
+  // Case 1: tool page
+  if (currentTool) {
+    currentCategory = data.categories.find(
+      c => c.id === currentTool.category
+    );
+    document.body.dataset.category = currentTool.category;
+  }
+
+  // Case 2: category page
+  else if (document.body.dataset.page === "category") {
+    const catId = document.body.dataset.category;
+    currentCategory = data.categories.find(c => c.id === catId);
+  }
+
+
+  /* ========= BUILD NAV ========= */
+  const nav = document.getElementById("main-nav");
+  if (nav) {
+    data.categories.forEach(cat => {
+      const link = document.createElement("a");
+      link.href = cat.url;
+      link.textContent = cat.name;
+
+      const isActive =
+        document.body.dataset.category === cat.id;
+
+      link.className = `
+        text-sm font-medium h-full flex items-center
+        transition-colors
+        ${isActive
+          ? "text-primary border-b-2 border-primary"
+          : "text-slate-600 dark:text-slate-400 hover:text-primary"}
+      `;
+
+      nav.appendChild(link);
+    });
+  }
+
+  /* ========= BUILD BREADCRUMB ========= */
+  const breadcrumb = document.getElementById("breadcrumb");
+
+  if (breadcrumb && currentCategory) {
+    breadcrumb.innerHTML = `
+      <a href="/index.html" class="hover:text-primary">Home</a>
+      <span class="mx-1">/</span>
+      <a href="${currentCategory.url}" class="hover:text-primary">
+        ${currentCategory.name}
+      </a>
+      ${currentTool ? `
+        <span class="mx-1">/</span>
+        <span class="text-slate-700 dark:text-slate-200 font-medium">
+          ${currentTool.name}
+        </span>
+      ` : ""}
     `;
+    breadcrumb.classList.remove("hidden");
+  }
 
-    nav.appendChild(link);
-  });
-}
-
-/* ========= INIT ========= */
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadHeader();
-  await buildNavigation();
 });
