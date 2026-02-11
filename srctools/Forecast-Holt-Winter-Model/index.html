@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Hình Dự báo Holt-Winters</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { primary: "#137fec", "background-dark": "#101922" },
+                    fontFamily: { display: ["Space Grotesk", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header-placeholder"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight dark:text-white">Mô Hình Dự báo Holt-Winters</h1>
+        <p class="mt-2 text-slate-500 dark:text-slate-400">
+            Dự báo nhu cầu chuỗi thời gian sử dụng mô hình Holt-Winter Model (Nhóm Triple Exponential Smoothing) và tối ưu hóa hệ số tự động.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="space-y-6">
+            <div class="ie-card">
+                <h2 class="ie-card-title">Cấu hình dự báo</h2>
+                
+                <div class="mb-4">
+                    <label class="ie-input-label">Dữ liệu đầu vào (.xlsx, .csv)</label>
+                    <input type="file" id="fileInput" class="ie-input" accept=".xlsx, .xls, .csv">
+                    <button class="text-primary text-xs mt-2 font-medium" onclick="downloadTemplate()">+ Tải template mẫu</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="ie-input-label">Chu kỳ - Seasonal Length ($L$)</label>
+                        <input type="number" class="ie-input" id="seasonLen" value="4">
+                    </div>
+                    <div>
+                        <label class="ie-input-label">Số lượng kỳ dự báo tiếp theo</label>
+                        <input type="number" class="ie-input" id="forecastPoints" value="4">
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center gap-2">
+                    <input type="checkbox" id="autoOptimize" checked class="rounded border-gray-300 text-primary focus:ring-primary">
+                    <span class="text-sm dark:text-slate-300">Tối ưu hóa Nelder-Mead</span>
+                </div>
+
+                <button class="ie-button w-full" onclick="calculateForecast()">
+                    Phân tích & Dự báo
+                </button>
+
+                <div id="result-summary" class="hidden mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Thông số tối ưu</h3>
+                    <div id="params-output" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="ie-card">
+                <h2 class="ie-card-title">Trực quan hóa dữ liệu</h2>
+                <div class="h-[400px] w-full">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+
+            <div id="table-card" class="ie-card hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="ie-card-title !mb-0">Chi tiết dự báo</h2>
+                    <button class="text-primary font-bold text-sm" onclick="exportExcel()">Tải kết quả ↓</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-slate-500 border-b dark:border-slate-800">
+                            <tr>
+                                <th class="pb-2 font-semibold">Giai đoạn</th>
+                                <th class="pb-2 font-semibold text-right">Giá trị dự báo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forecastTableBody" class="dark:text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="ie-card">
+                <h2 class="ie-card-title">Mô hình toán học</h2>
+                <div class="ie-formula text-center py-6">
+                    \[ \hat{y}_{t+m} = (L_t + mT_t)S_{t-L+1+(m-1)modL} \]
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-xs dark:text-slate-400">
+                    <p><strong>Alpha ($\alpha$):</strong> Hệ số san bằng mức độ (Level)</p>
+                    <p><strong>Beta ($\beta$):</strong> Hệ số san bằng xu hướng (Trend)</p>
+                    <p><strong>Gamma ($\gamma$):</strong> Hệ số san bằng mùa vụ (Season)</p>
+                </div>
+            </div>
+
+
+            <div class="ie-card">
+                <h3 class="ie-section-title !mt-0">Câu hỏi thường gặp</h3>
+                <div class="ie-faq space-y-3 mt-4">
+                    <details>
+                        <summary>Chu kỳ - Seasonal Length (L) là gì?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400 space-y-2">
+                            <p>Chu kỳ là khoảng thời gian mà các biến động dữ liệu bắt đầu lặp lại chính nó. Trong mô hình Holt-Winters, \(L\) giúp máy nhận diện "quy luật cũ".</p>
+                            <ul class="list-disc ml-5 space-y-1">
+                                <li><strong>Dữ liệu theo Ngày:</strong> Nếu lặp lại theo tuần, \(L = 7\).</li>
+                                <li><strong>Dữ liệu theo Tháng:</strong> Nếu lặp lại theo năm, \(L = 12\).</li>
+                                <li><strong>Dữ liệu theo Quý:</strong> Nếu lặp lại sau mỗi 3 tháng, \(L = 3\).</li>
+                            </ul>
+                            <p class="italic text-primary">Lưu ý: Cần ít nhất \(2 \times L\) điểm dữ liệu lịch sử để dự báo đạt độ chính xác tốt nhất.</p>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Kỳ dự báo - Forecast Points (n) là gì?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            <p>Kỳ dự báo là số lượng bước thời gian trong tương lai mà bạn muốn tính toán. Đơn vị này khớp với dữ liệu đầu vào của bạn:</p>
+                            <ul class="list-disc ml-5 mt-1">
+                                <li>Nếu nhập dữ liệu <strong>Ngày</strong>, \(n=7\) là dự báo cho 1 tuần tới.</li>
+                                <li>Nếu nhập dữ liệu <strong>Tháng</strong>, \(n=12\) là dự báo cho 1 năm tới.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Ví dụ thực tế về cách điền thông số?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            <p>Giả sử bạn có dữ liệu bán hàng của <strong>24 tháng</strong> và muốn dự báo cho <strong>năm tiếp theo</strong>:</p>
+                            <ul class="list-none space-y-1 mt-2">
+                                <li>✅ <strong>Dữ liệu đầu vào:</strong> 24 dòng.</li>
+                                <li>✅ <strong>Chu kỳ (L):</strong> Điền <code class="text-primary font-bold">12</code> (quy luật lặp lại theo năm).</li>
+                                <li>✅ <strong>Kỳ dự báo:</strong> Điền <code class="text-primary font-bold">12</code> (xem 12 tháng tương lai).</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Tóm tắt nhanh về L và Kỳ dự báo</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            <p>• <strong>L (Chu kỳ):</strong> Nhìn về quá khứ để tìm quy luật lặp lại.</p>
+                            <p>• <strong>Kỳ dự báo:</strong> Nhìn về tương lai để đưa ra con số ước tính.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            
+            
+
+        </div>
+    </div>
+</main>
+
+<script src="/js/layout.js"></script>
+<script src="calculator.js"></script>
+</body>
+</html>

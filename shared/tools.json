@@ -61,6 +61,22 @@
       "url": "/srctools/joint-eoq/index.html",
       "description": "Tính lượng đặt hàng chu kỳ đặt hàng chung nhiều mặt hàng",
       "premium": false
+    },
+    {
+      "id": "forecast-holt-winter-model",
+      "name": "Forecast Holt-Winter Model",
+      "category": "productivity",
+      "url": "/srctools/Forecast-Holt-Winter-Model/index.html",
+      "description": "Dự báo nhu cầu chuỗi thời gian sử dụng mô hình Triple Exponential Smoothing",
+      "premium": false
+    },
+    {
+      "id": "forecast-decomposition-model",
+      "name": "Forecast Decomposition Model",
+      "category": "productivity",
+      "url": "/srctools/Forecast-Decomposition-Model/index.html",
+      "description": "Dự báo dựa trên việc tách biệt dữ liệu thành 3 phần: Xu hướng (Trend), Mùa vụ (Seasonal) và Nhiễu (Residual).",
+      "premium": false
     }
   ]
 }
