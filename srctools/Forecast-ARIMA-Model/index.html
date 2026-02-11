@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Hình Dự Báo ARIMA</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { primary: "#137fec", "background-dark": "#101922" },
+                    fontFamily: { display: ["Space Grotesk", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-background-dark">
+
+<div id="header-placeholder"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight dark:text-white">Mô Hình Dự Báo ARIMA</h1>
+        <p class="mt-2 text-slate-500 dark:text-slate-400">
+            Dự báo chuỗi thời gian dựa trên mô hình Tự hồi quy Tích hợp Trung bình trượt (ARIMA) với khả năng xử lý dữ liệu không dừng.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="space-y-6">
+            <div class="ie-card">
+                <h2 class="ie-card-title">Cấu hình mô hình (p, d, q)</h2>
+                
+                <div class="mb-4">
+                    <label class="ie-input-label">Dữ liệu đầu vào (.xlsx, .csv)</label>
+                    <input type="file" id="fileInput" class="ie-input" accept=".xlsx, .xls, .csv">
+                    <button class="text-primary text-xs mt-2 font-medium" onclick="downloadTemplate()">+ Tải template mẫu</button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="ie-input-label">p (AR)</label>
+                        <input type="number" class="ie-input" id="p_val" value="1" min="0">
+                    </div>
+                    <div>
+                        <label class="ie-input-label">d (I)</label>
+                        <input type="number" class="ie-input" id="d_val" value="1" min="0" max="2">
+                    </div>
+                    <div>
+                        <label class="ie-input-label">q (MA)</label>
+                        <input type="number" class="ie-input" id="q_val" value="0" min="0">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="ie-input-label">Số kỳ dự báo tiếp theo</label>
+                    <input type="number" class="ie-input" id="forecastPoints" value="5">
+                </div>
+
+                <button class="ie-button w-full mt-4" onclick="calculateForecast()">
+                    Phân tích & Dự báo
+                </button>
+
+                <div id="result-summary" class="hidden mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Hệ số ước lượng</h3>
+                    <div id="params-output" class="text-sm font-mono text-primary space-y-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="ie-card">
+                <h2 class="ie-card-title">Trực quan hóa dự báo</h2>
+                <div class="h-[400px] w-full">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+
+            <div id="table-card" class="ie-card hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="ie-card-title !mb-0">Chi tiết dự báo</h2>
+                    <button class="text-primary font-bold text-sm" onclick="exportExcel()">Tải kết quả ↓</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-slate-500 border-b dark:border-slate-800">
+                            <tr>
+                                <th class="pb-2 font-semibold">Giai đoạn</th>
+                                <th class="pb-2 font-semibold text-right">Giá trị dự báo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forecastTableBody" class="dark:text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="ie-card">
+                <h2 class="ie-card-title">Cấu trúc toán học ARIMA</h2>
+                <div class="ie-formula text-center py-6 text-lg">
+                    \[ Y'_t = c + \phi_1 Y'_{t-1} + ... + \phi_p Y'_{t-p} + \theta_1 \epsilon_{t-1} + ... + \theta_q \epsilon_{t-q} + \epsilon_t \]
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-xs dark:text-slate-400 leading-relaxed">
+                    <p><strong>AutoRegressive (p):</strong> Sử dụng mối quan hệ phụ thuộc giữa một quan sát và một số lượng quan sát trễ (lags).</p>
+                    <p><strong>Integrated (d):</strong> Sử dụng sai phân các quan sát thô (trừ quan sát ở bước thời gian trước đó) để làm chuỗi thời gian trở nên dừng.</p>
+                    <p><strong>Moving Average (q):</strong> Sử dụng mối quan hệ phụ thuộc giữa một quan sát và sai số còn lại từ mô hình trung bình trượt áp dụng cho các quan sát trễ.</p>
+                </div>
+            </div>
+
+            <div class="ie-card">
+                <h3 class="ie-section-title !mt-0">Câu hỏi thường gặp & Mẹo cấu hình</h3>
+                <div class="ie-faq space-y-3 mt-4">
+                    
+                    <details open>
+                        <summary class="text-primary font-bold">Mẹo chọn bộ (p, d, q) theo loại dữ liệu</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            <p class="mb-2">Hãy quan sát biểu đồ lịch sử của bạn và thử cấu hình sau:</p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-[11px] border-collapse mb-3">
+                                    <thead>
+                                        <tr class="bg-slate-100 dark:bg-slate-800 text-left">
+                                            <th class="p-2 border dark:border-slate-700">Đặc điểm dữ liệu</th>
+                                            <th class="p-2 border dark:border-slate-700">Bộ (p, d, q) gợi ý</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="p-2 border dark:border-slate-700">Dữ liệu ổn định, không có xu hướng rõ ràng</td>
+                                            <td class="p-2 border dark:border-slate-700 font-mono text-primary">(1, 0, 0) hoặc (2, 0, 0)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border dark:border-slate-700">Có xu hướng tăng/giảm (Trend) ổn định</td>
+                                            <td class="p-2 border dark:border-slate-700 font-mono text-primary">(1, 1, 0) - Phổ biến nhất</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border dark:border-slate-700">Tăng trưởng nóng hoặc biến động mạnh</td>
+                                            <td class="p-2 border dark:border-slate-700 font-mono text-primary">(1, 2, 1) hoặc (2, 2, 2)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border dark:border-slate-700">Dữ liệu đứng yên hoặc "bước đi ngẫu nhiên"</td>
+                                            <td class="p-2 border dark:border-slate-700 font-mono text-primary">(0, 1, 0)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="italic text-[11px] text-yellow-600 dark:text-yellow-500">💡 Tip: Nếu dự báo ra một đường thẳng tắp quá mức, hãy thử tăng <strong>p</strong> lên thêm 1 đơn vị.</p>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Khi nào nên dùng ARIMA thay vì Holt-Winters?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            ARIMA mạnh hơn khi dữ liệu không có tính mùa vụ rõ ràng nhưng có các mối tương quan phức tạp giữa các kỳ (ví dụ: giá chứng khoán, chỉ số kinh tế). Holt-Winters phù hợp hơn cho dữ liệu có tính chu kỳ/mùa vụ lặp lại đều đặn.
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Ý nghĩa của thông số d (Integrated) là gì?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            Nếu dữ liệu của bạn có xu hướng tăng hoặc giảm liên tục (không dừng), bạn cần \(d=1\) hoặc \(d=2\) để "làm phẳng" dữ liệu trước khi dự báo. Nếu \(d=0\), mô hình giả định dữ liệu đã ổn định quanh một mức trung bình.
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Tại sao hệ số q (MA) thường để bằng 0?</summary>
+                        <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                            Trong các mô hình dự báo kinh doanh thực tế, thành phần tự hồi quy (AR - p) thường quan trọng hơn. Chỉ thêm \(q > 0\) khi bạn tin rằng các sai số đột biến của quá khứ (ví dụ: một đợt khủng hoảng ngắn) vẫn đang tiếp tục ảnh hưởng đến hiện tại.
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script src="/js/layout.js"></script>
+<script src="calculator.js"></script>
+</body>
+</html>

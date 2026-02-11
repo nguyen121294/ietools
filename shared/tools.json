@@ -16,7 +16,7 @@
       "url": "/categories/lean.html"
     },
     {
-      "id": "supply-chain",
+      "id": "supplychain",
       "name": "Supply Chain Tools",
       "url": "/categories/supplychain.html"
     },
@@ -65,7 +65,7 @@
     {
       "id": "forecast-holt-winter-model",
       "name": "Forecast Holt-Winter Model",
-      "category": "productivity",
+      "category": "supplychain",
       "url": "/srctools/Forecast-Holt-Winter-Model/index.html",
       "description": "Dự báo nhu cầu chuỗi thời gian sử dụng mô hình Triple Exponential Smoothing",
       "premium": false
@@ -73,9 +73,17 @@
     {
       "id": "forecast-decomposition-model",
       "name": "Forecast Decomposition Model",
-      "category": "productivity",
+      "category": "supplychain",
       "url": "/srctools/Forecast-Decomposition-Model/index.html",
       "description": "Dự báo dựa trên việc tách biệt dữ liệu thành 3 phần: Xu hướng (Trend), Mùa vụ (Seasonal) và Nhiễu (Residual).",
+      "premium": false
+    },
+    {
+      "id": "forecast-ARIMA-model",
+      "name": "Forecast ARIMA Model",
+      "category": "supplychain",
+      "url": "/srctools/Forecast-ARIMA-Model/index.html",
+      "description": "Dự báo chuỗi thời gian dựa trên mô hình Tự hồi quy Tích hợp Trung bình trượt (ARIMA)",
       "premium": false
     }
   ]
