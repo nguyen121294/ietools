@@ -2,6 +2,8 @@
  * BALANCING LOGIC ENGINE
  */
 window.lastResult = null; 
+window.improvedResult = null;
+var stationChartObj = null;
 
 // Hàm lấy dữ liệu từ bảng UI
 function getTasksFromUI() {
@@ -25,10 +27,7 @@ function getTasksFromUI() {
     });
 }
 
-// Hàm solve, optimizeTakt, runBalancing, renderResult giữ nguyên như bạn đã gửi
-// CHÚ Ý: Đảm bảo hàm runBalancing gọi getTasksFromUI()
-
-// 3. Logic giải bài toán (Line Balancing)
+// 3. Logic giải bài toán (Line Balancing RPW)
 function solve(tasks, takt, maxTasksPerStation) {
     let unassigned = [...tasks].map(t => ({...t, effTime: t.time / t.machines}));
     let stations = [];
@@ -79,100 +78,39 @@ function solve(tasks, takt, maxTasksPerStation) {
     return { stations, takt, totalTime, si };
 }
 
-// 4. HÀM TỐI ƯU TAKT TIME (Hàm bị thiếu của bạn)
-function optimizeTakt(tasks, maxTasks) {
-    let best = null;
-    let minSI = Infinity;
-    const minTakt = Math.max(...tasks.map(t => t.time / t.machines));
-    const maxTakt = tasks.reduce((a,b) => a + b.time, 0);
-
-    // Quét các giá trị Takt Time để tìm Smoothness Index thấp nhất
-    for (let t = minTakt; t <= maxTakt; t += 0.5) {
-        let res = solve(tasks, t, maxTasks);
-        if (res.stations.length > 0 && res.si < minSI) {
-            minSI = res.si;
-            best = {...res, takt: t};
-        }
-    }
-    return best;
-}
-
-// 5. Điều phối tính toán
-/**
- * BALANCING LOGIC - CẬP NHẬT TỐI ƯU HÓA SỐ MÁY
- */
-
-function runBalancing(mode) {
-    const tasks = getTasksFromUI();
-    if (tasks.length === 0) return alert("Vui lòng thêm công việc!");
-    
-    const targetTakt = parseFloat(document.getElementById('targetTakt').value);
-    const maxTasks = parseInt(document.getElementById('maxTasks').value);
-    const sigma = parseFloat(document.getElementById('sigma').value) / 100;
-
-    // --- BƯỚC 1: KIỂM TRA ĐIỀU KIỆN TIÊN QUYẾT (CASE 1) ---
-    const invalidTasks = tasks.filter(t => t.cycleTime > targetTakt + 0.001);
-    if (invalidTasks.length > 0) {
-        const names = invalidTasks.map(t => t.name).join(", ");
-        alert(`LỖI: Các công việc [${names}] có Cycle Time > Takt Time mục tiêu. \n\nVui lòng tăng số máy hoặc giảm thời gian công việc.`);
-        return;
-    }
-
-    // --- BƯỚC 2: CHẠY KẾT QUẢ BAN ĐẦU ---
-    let initialResult = solve(tasks, targetTakt, maxTasks);
-    window.lastResult = initialResult; // Lưu để xuất excel
-    
-    document.getElementById('resultsArea').innerHTML = "";
-    renderResult(initialResult, "KẾT QUẢ BAN ĐẦU", sigma);
-
-    // --- BƯỚC 3: LOOP TỐI ƯU GIẢM MÁY (MACHINE REDUCTION OPTIMIZER) ---
-    if (mode === 'fixed') {
-        optimizeMachines(tasks, targetTakt, maxTasks, sigma, initialResult);
-    } else {
-        // Nếu là mode auto, bạn có thể gọi hàm optimizeTakt cũ hoặc nâng cấp tương tự
-        let autoRes = optimizeTakt(tasks, maxTasks);
-        renderResult(autoRes, "TỐI ƯU TỔNG THỂ (AUTO)", sigma);
-    }
-
-    document.getElementById('btnExportResult').classList.remove('hidden');
-}
-
+// Hàm tối ưu giảm máy (Loop Optimization)
 function optimizeMachines(originalTasks, takt, maxTasks, sigma, initialResult) {
     let currentTasks = JSON.parse(JSON.stringify(originalTasks));
     let improved = false;
     let reductions = [];
 
-    // Thử giảm máy cho từng task (ưu tiên những task có nhiều máy trước)
+    // Loop giảm máy
     for (let i = 0; i < currentTasks.length; i++) {
         while (currentTasks[i].machines > 1) {
-            // Giả định giảm 1 máy
             currentTasks[i].machines -= 1;
             currentTasks[i].cycleTime = currentTasks[i].time / currentTasks[i].machines;
 
-            // Kiểm tra xem sau khi giảm, CT có vi phạm Takt không
             if (currentTasks[i].cycleTime <= takt) {
                 let testResult = solve(currentTasks, takt, maxTasks);
                 
-                // Điều kiện để chấp nhận cải tiến: 
-                // 1. Hiệu suất (Efficiency) tăng lên hoặc bằng
-                // 2. Smoothness Index (SI) không tệ đi quá nhiều (hoặc cải thiện)
-                if (testResult.stations.length <= initialResult.stations.length) {
+                // Logic so sánh: Tốt hơn về số trạm HOẶC bằng số trạm nhưng Smooth hơn
+                if (testResult.stations.length < initialResult.stations.length || 
+                   (testResult.stations.length === initialResult.stations.length && testResult.si <= initialResult.si)) {
+                    
                     reductions.push({
                         task: currentTasks[i].name,
                         from: currentTasks[i].machines + 1,
                         to: currentTasks[i].machines
                     });
                     improved = true;
-                    // Cập nhật kết quả tốt nhất hiện tại
                     initialResult = testResult; 
+                    window.improvedResult = testResult; 
                 } else {
-                    // Không tốt hơn thì hoàn tác (Rollback)
                     currentTasks[i].machines += 1;
                     currentTasks[i].cycleTime = currentTasks[i].time / currentTasks[i].machines;
                     break;
                 }
             } else {
-                // Vi phạm Takt thì hoàn tác và dừng giảm cho task này
                 currentTasks[i].machines += 1;
                 currentTasks[i].cycleTime = currentTasks[i].time / currentTasks[i].machines;
                 break;
@@ -181,9 +119,7 @@ function optimizeMachines(originalTasks, takt, maxTasks, sigma, initialResult) {
     }
 
     if (improved) {
-        window.improvedResult = initialResult; // Lưu kết quả cải thiện
         let reductionMsg = reductions.map(r => `• ${r.task}: giảm ${r.from} → ${r.to} máy`).join("<br>");
-        
         const improvementHtml = `
             <div class="bg-emerald-900/20 border border-emerald-500 p-4 rounded-lg mb-4">
                 <h4 class="text-emerald-400 font-bold mb-2">ĐỀ XUẤT CẢI THIỆN (TIẾT KIỆM MÁY):</h4>
@@ -194,6 +130,134 @@ function optimizeMachines(originalTasks, takt, maxTasks, sigma, initialResult) {
         renderResult(initialResult, "KẾT QUẢ SAU CẢI THIỆN", sigma);
     }
 }
+
+// --- LOGIC MỚI: SIMULATION ---
+function runSimulation(result) {
+    const shiftTimeMinutes = parseFloat(document.getElementById('shiftTime').value) || 480;
+    const sigmaPercent = parseFloat(document.getElementById('sigma').value) / 100;
+    const shiftTimeSeconds = shiftTimeMinutes * 60;
+
+    // 1. Tìm Trạm Bottleneck (Trạm có tải cao nhất)
+    let maxLoad = 0;
+    result.stations.forEach(s => {
+        if (s.load > maxLoad) maxLoad = s.load;
+    });
+
+    // 2. Tính toán thống kê
+    // Mean Cycle Time = Bottleneck Load
+    const meanCT = maxLoad; 
+    
+    // Độ lệch chuẩn của trạm Bottleneck (giả định theo sigma input)
+    const stdDev = meanCT * sigmaPercent;
+
+    // Cycle Time "An toàn" ở mức 95% tin cậy (Z = 1.645 cho 1 phía)
+    // Tức là 95% số sản phẩm sẽ hoàn thành trong thời gian này hoặc nhanh hơn
+    const safeCT = meanCT + (1.645 * stdDev);
+
+    // 3. Tính Output
+    const meanOutput = Math.floor(shiftTimeSeconds / meanCT);
+    const safeOutput = Math.floor(shiftTimeSeconds / safeCT);
+
+    // 4. Render kết quả Simulation
+    const simHtml = `
+    <div class="ie-card border-l-4 border-purple-500 shadow-xl bg-slate-800 p-6 rounded-xl">
+        <h3 class="ie-card-title text-purple-400 underline underline-offset-8 decoration-2 mb-6">KẾT QUẢ MÔ PHỎNG SẢN XUẤT (SIMULATION)</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-4 bg-slate-700/50 rounded-lg border border-slate-600">
+                <span class="text-xs uppercase font-bold opacity-60 text-slate-300">Bottleneck (Cycle Time)</span>
+                <div class="text-3xl font-bold text-white mt-1">${meanCT.toFixed(2)}s</div>
+                <div class="text-xs text-slate-400 mt-1">Sigma: ±${(stdDev*3).toFixed(2)}s</div>
+            </div>
+
+            <div class="p-4 bg-slate-700/50 rounded-lg border border-slate-600">
+                <span class="text-xs uppercase font-bold opacity-60 text-amber-400">Output Trung Bình (Mean)</span>
+                <div class="text-3xl font-bold text-amber-400 mt-1">${meanOutput} <small class="text-sm">pcs</small></div>
+                <div class="text-xs text-slate-400 mt-1">Dựa trên Cycle Time trung bình</div>
+            </div>
+
+            <div class="p-4 bg-slate-700/50 rounded-lg border border-purple-500/50">
+                <span class="text-xs uppercase font-bold opacity-60 text-purple-400">Output Tin Cậy 95%</span>
+                <div class="text-3xl font-bold text-purple-400 mt-1">${safeOutput} <small class="text-sm">pcs</small></div>
+                <div class="text-xs text-slate-400 mt-1">Cam kết sản xuất được (95% Confidence)</div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-sm text-slate-400 italic">
+            * Tính toán dựa trên thời gian ca: <strong>${shiftTimeMinutes} phút</strong> và độ biến thiên σ: <strong>${(sigmaPercent*100)}%</strong>.
+        </div>
+    </div>
+    `;
+
+    const simArea = document.getElementById('simulationArea');
+    simArea.classList.remove('hidden');
+    simArea.innerHTML = simHtml;
+}
+
+
+// MAIN FUNCTION: RUN BALANCING
+function runBalancing(mode) {
+    const tasks = getTasksFromUI();
+    if (tasks.length === 0) return alert("Vui lòng thêm công việc!");
+    
+    let targetTakt = parseFloat(document.getElementById('targetTakt').value);
+    const maxTasks = parseInt(document.getElementById('maxTasks').value);
+    const sigma = parseFloat(document.getElementById('sigma').value) / 100;
+
+    // Reset vùng hiển thị
+    document.getElementById('resultsArea').innerHTML = "";
+    document.getElementById('simulationArea').innerHTML = ""; // Reset Simulation
+    document.getElementById('simulationArea').classList.add('hidden');
+    window.improvedResult = null; 
+
+    // --- LOGIC AUTO MỚI: TỰ TÌM TAKT TIME ---
+    if (mode === 'auto') {
+        // Tìm Cycle Time lớn nhất trong danh sách (dựa trên số máy hiện tại)
+        // CT = Time / Machines
+        const maxCT = Math.max(...tasks.map(t => t.cycleTime));
+        
+        // Gán ngược lại vào ô Input để user thấy
+        document.getElementById('targetTakt').value = maxCT;
+        targetTakt = maxCT; 
+        
+        // Mode auto bây giờ thực chất là chạy fixed với Takt = Max CT
+    }
+
+    // --- BƯỚC 1: KIỂM TRA ĐIỀU KIỆN TIÊN QUYẾT ---
+    const invalidTasks = tasks.filter(t => t.cycleTime > targetTakt + 0.001);
+    if (invalidTasks.length > 0) {
+        const names = invalidTasks.map(t => t.name).join(", ");
+        alert(`LỖI: Các công việc [${names}] có Cycle Time (${invalidTasks[0].cycleTime.toFixed(2)}s) > Takt Time mục tiêu (${targetTakt}s).`);
+        return;
+    }
+
+    // --- BƯỚC 2: CHẠY KẾT QUẢ BAN ĐẦU ---
+    // Luôn dùng hàm solve vì 'auto' đã tìm ra Takt cụ thể rồi
+    let initialResult = solve(tasks, targetTakt, maxTasks);
+    
+    window.lastResult = initialResult;
+    renderResult(initialResult, "KẾT QUẢ BAN ĐẦU", sigma);
+
+    document.getElementById('stationChartContainer').classList.remove('hidden');
+    drawStationChart(initialResult);
+
+    // --- BƯỚC 3: TỐI ƯU GIẢM MÁY (Luôn chạy cho cả Fixed và Auto) ---
+    // Vì 'auto' bản chất là tìm điểm bắt đầu tốt nhất, sau đó vẫn nên thử giảm máy
+    optimizeMachines(tasks, targetTakt, maxTasks, sigma, initialResult);
+    
+    // Nếu có kết quả cải thiện, cập nhật lại biểu đồ
+    if (window.improvedResult) {
+        drawStationChart(window.improvedResult);
+    }
+
+    // --- BƯỚC 4: CHẠY SIMULATION ---
+    // Lấy kết quả tốt nhất hiện có (Cải thiện hoặc Ban đầu)
+    const finalResult = window.improvedResult ? window.improvedResult : initialResult;
+    runSimulation(finalResult);
+
+    document.getElementById('btnExportResult').classList.remove('hidden');
+}
+
 
 function renderResult(data, title, sigma) {
     const eff = (data.totalTime / (data.stations.length * data.takt)) * 100;
@@ -238,3 +302,65 @@ function renderResult(data, title, sigma) {
     document.getElementById('resultsArea').innerHTML += html;
 }
 
+function drawStationChart(result) {
+    const canvas = document.getElementById('stationChart');
+    if (!canvas) return;
+
+    if (stationChartObj) stationChartObj.destroy();
+
+    const labels = result.stations.map((_, i) => `Trạm ${i + 1}`);
+    const dataLoads = result.stations.map(s => s.load);
+    const taktLines = Array(result.stations.length).fill(result.takt);
+
+    stationChartObj = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Tải trọng trạm (s)',
+                    data: dataLoads,
+                    backgroundColor: dataLoads.map(load => load > result.takt + 0.01 ? '#ef4444' : '#10b981'), 
+                    borderRadius: 5,
+                    order: 2
+                },
+                {
+                    label: 'Takt Time',
+                    data: taktLines,
+                    type: 'line',
+                    borderColor: '#f59e0b',
+                    borderWidth: 2,
+                    borderDash: [10, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    order: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: '#334155' },
+                    ticks: { color: '#cbd5f5' },
+                    title: { display: true, text: 'Giây (s)', color: '#cbd5f5' }
+                },
+                x: { ticks: { color: '#cbd5f5' } }
+            },
+            plugins: {
+                legend: { labels: { color: '#cbd5f5' } },
+                tooltip: {
+                    callbacks: {
+                        afterBody: (context) => {
+                            const stationIdx = context[0].dataIndex;
+                            const tasks = result.stations[stationIdx].tasks.map(t => t.name).join('\n');
+                            return `Công việc:\n${tasks}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}

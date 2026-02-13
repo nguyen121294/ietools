@@ -1,14 +1,11 @@
 /**
- * EXCEL HANDLER & UI MANAGEMENT - FIXED VERSION
+ * EXCEL HANDLER & UI MANAGEMENT - FINAL VERSION
  */
 var yamazumiChart = null;
 var taskCount = 0;
 
-// Dùng DOMContentLoaded thay vì window load để ưu tiên chạy sớm hơn
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Hệ thống khởi tạo...");
-    
-    // Đảm bảo xóa bảng trước khi nạp mẫu
     const tbody = document.getElementById('taskBody');
     if (tbody) tbody.innerHTML = "";
     
@@ -47,8 +44,6 @@ function addTask(data = {}) {
         </td>
     `;
     tbody.appendChild(row);
-    
-    // Chỉ vẽ biểu đồ nếu hàm drawYamazumi tồn tại và không lỗi
     try { drawYamazumi(); } catch(e) { console.warn("Chưa thể vẽ biểu đồ:", e.message); }
 }
 
@@ -67,7 +62,6 @@ function drawYamazumi() {
     const canvas = document.getElementById('yamazumiChart');
     if (!canvas) return;
 
-    // Lấy giá trị Takt Time mục tiêu từ UI
     const targetTakt = parseFloat(document.getElementById('targetTakt').value) || 0;
     
     if (yamazumiChart) yamazumiChart.destroy();
@@ -78,7 +72,6 @@ function drawYamazumi() {
             labels: tasks.map(t => t.name),
             datasets: [
                 {
-                    // Dataset 1: Cột Cycle Time của từng task
                     label: 'Cycle Time (s)',
                     data: tasks.map(t => t.cycleTime),
                     backgroundColor: '#137fec',
@@ -86,14 +79,13 @@ function drawYamazumi() {
                     order: 2
                 },
                 {
-                    // Dataset 2: Đường Takt Time mục tiêu
                     label: 'Target Takt Time',
                     data: Array(tasks.length).fill(targetTakt),
                     type: 'line',
-                    borderColor: '#ef4444', // Màu đỏ
+                    borderColor: '#ef4444',
                     borderWidth: 3,
-                    borderDash: [5, 5],    // Đường nét đứt
-                    pointRadius: 0,         // Không hiện điểm nút
+                    borderDash: [5, 5],
+                    pointRadius: 0,
                     fill: false,
                     order: 1
                 }
@@ -103,40 +95,23 @@ function drawYamazumi() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: true,
-                    labels: { color: '#cbd5f5' }
-                }
+                legend: { display: true, labels: { color: '#cbd5f5' } }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     grid: { color: '#334155' },
                     ticks: { color: '#cbd5f5' },
-                    title: {
-                        display: true,
-                        text: 'Giây (s)',
-                        color: '#cbd5f5'
-                    }
+                    title: { display: true, text: 'Giây (s)', color: '#cbd5f5' }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#cbd5f5' }
-                }
+                x: { ticks: { color: '#cbd5f5' } }
             }
         }
     });
 }
 
-// Thêm sự kiện: Khi thay đổi Takt Time ở ô input, biểu đồ tự vẽ lại đường line
-document.getElementById('targetTakt').addEventListener('input', drawYamazumi);
-
 // Xử lý Import Excel
-
-
 const excelInput = document.getElementById('excelFile');
-
-
 if(excelInput) {
     excelInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -150,17 +125,12 @@ if(excelInput) {
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(firstSheet);
                 
-                // Reset bảng
                 document.getElementById('taskBody').innerHTML = "";
                 taskCount = 0;
 
                 if (rows.length === 0) alert("File Excel trống hoặc sai định dạng!");
 
-                
-
-                // Thay thế đoạn rows.forEach cũ bằng đoạn này:
                 rows.forEach((r, index) => {
-                    // Hàm tìm giá trị trong object mà không phân biệt hoa thường
                     const getVal = (obj, keys) => {
                         const foundKey = Object.keys(obj).find(k => keys.includes(k.trim().toLowerCase()));
                         return foundKey ? obj[foundKey] : null;
@@ -173,12 +143,8 @@ if(excelInput) {
                         compat: String(getVal(r, ["compat_ids", "id ghép chung", "compat", "ghép"]) || ""),
                         machines: parseInt(getVal(r, ["machines", "số máy", "máy"])) || 1
                     };
-
-                    console.log("Đang nạp dòng:", taskData); // Kiểm tra xem có dữ liệu không
                     addTask(taskData);
                 });
-
-                console.log("Import thành công " + rows.length + " dòng.");
             } catch (err) {
                 console.error("Lỗi đọc Excel:", err);
                 alert("Lỗi khi đọc file Excel. Vui lòng kiểm tra lại định dạng.");
@@ -198,19 +164,43 @@ function downloadTemplate() {
 
 function exportResultToExcel() {
     if (!window.lastResult) return alert("Vui lòng tính toán trước khi xuất!");
-    const excelData = [
-        ["BÁO CÁO PHÂN CHIA CHUYỀN SẢN XUẤT"],
-        ["Takt Time:", window.lastResult.takt.toFixed(2) + "s"],
-        [],
-        ["STT Trạm", "Danh sách công việc", "Tổng thời gian trạm (s)", "Hiệu suất trạm (%)"]
-    ];
-    window.lastResult.stations.forEach((s, i) => {
-        excelData.push([i + 1, s.tasks.map(t => t.name).join(", "), s.load.toFixed(2), ((s.load / window.lastResult.takt) * 100).toFixed(1) + "%"]);
-    });
-    const ws = XLSX.utils.aoa_to_sheet(excelData);
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "KetQuaLineBalancing");
-    XLSX.writeFile(wb, "Bao_Cao_Line_Balancing.xlsx");
+
+    // Sheet 1: Kết quả ban đầu
+    const sheet1Data = prepareExcelData(window.lastResult, "KẾT QUẢ BAN ĐẦU");
+    const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
+    XLSX.utils.book_append_sheet(wb, ws1, "KetQuaBanDau");
+
+    // Sheet 2: Kết quả cải thiện (nếu có)
+    if (window.improvedResult) {
+        const sheet2Data = prepareExcelData(window.improvedResult, "KẾT QUẢ CẢI THIỆN");
+        const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
+        XLSX.utils.book_append_sheet(wb, ws2, "KetQuaCaiThien");
+    }
+
+    XLSX.writeFile(wb, "Bao_Cao_Toi_Uu_Line.xlsx");
+}
+
+function prepareExcelData(result, title) {
+    const data = [
+        [title],
+        ["Takt Time:", result.takt.toFixed(2) + "s"],
+        ["Tổng thời gian:", result.totalTime.toFixed(2) + "s"],
+        ["Hiệu suất:", ((result.totalTime / (result.stations.length * result.takt)) * 100).toFixed(1) + "%"],
+        [],
+        ["STT Trạm", "Danh sách công việc", "Tải trọng (s)", "Số máy tổng"]
+    ];
+    result.stations.forEach((s, i) => {
+        const totalMachines = s.tasks.reduce((sum, t) => sum + t.machines, 0);
+        data.push([
+            i + 1, 
+            s.tasks.map(t => `${t.name} (${t.machines}M)`).join(", "), 
+            s.load.toFixed(2), 
+            totalMachines
+        ]);
+    });
+    return data;
 }
 
 function clearAll() { 
@@ -218,5 +208,7 @@ function clearAll() {
         document.getElementById('taskBody').innerHTML = ""; 
         taskCount = 0; 
         if(yamazumiChart) yamazumiChart.destroy();
+        document.getElementById('resultsArea').innerHTML = "";
+        document.getElementById('simulationArea').classList.add('hidden');
     } 
 }
