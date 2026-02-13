@@ -150,3 +150,55 @@ body {
     cursor: pointer;
     font-weight: 600;
 }
+
+
+/* Chỉnh cho chữ trong bảng Bold và Trắng trên nền tối */
+.ie-input-table { 
+    background: transparent; 
+    border: none; 
+    width: 100%; 
+    text-align: center; 
+    font-size: 0.875rem; 
+    font-weight: 700; /* Bold chữ */
+    color: #ffffff;   /* Chữ trắng */
+    text-align: center; /* Canh giữa chữ trong input */
+}
+.dark .ie-input-table { color: #ffffff; }
+.ie-input-table::placeholder { color: #64748b; font-weight: 400; }
+
+/* Highlight header bảng */
+.task-table th { 
+    font-size: 0.75rem; 
+    color: #94a3b8; 
+    background: #1e293b; 
+    border: 1px solid #334155;
+    text-align: center;
+    vertical-align: middle;
+}
+.task-table td { 
+    border: 1px solid #334155;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* --- Bổ sung thêm cho CSS của bạn --- */
+.task-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.task-table tr:hover { background: rgba(19, 127, 236, 0.05); }
+
+/* Station Card Styling */
+.station-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.station-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.dark .ie-input-table { color: #ffffff !important; } /* Ép trắng trong darkmode */
+
+

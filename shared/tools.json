@@ -30,19 +30,11 @@
 
   "tools": [
     {
-      "id": "triangle-area",
-      "name": "Triangle Area Calculator",
-      "category": "productivity",
-      "url": "/srctools/triangle-area/index.html",
-      "description": "Calculate triangle area using Heron formula",
-      "premium": false
-    },
-    {
       "id": "line-balancing",
       "name": "Line Balancing",
-      "category": "productivity",
+      "category": "lean",
       "url": "/srctools/line-balancing/index.html",
-      "description": "RPW & heuristic line balancing",
+      "description": "line balancing",
       "premium": false
     },
 
