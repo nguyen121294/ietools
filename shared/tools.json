@@ -25,9 +25,7 @@
       "name": "Code model",
       "url": "/categories/codemodel.html"
     }
-
   ],
-
   "tools": [
     {
       "id": "line-balancing",
@@ -37,7 +35,6 @@
       "description": "line balancing",
       "premium": false
     },
-
     {
       "id": "eoq",
       "name": "EOQ Calculator",
@@ -45,7 +42,7 @@
       "url": "/srctools/eoq/index.html",
       "description": "Tính lượng đặt hàng kinh tế tối ưu (Economic Order Quantity)",
       "premium": false
-    }, 
+    },
     {
       "id": "joint-eoq",
       "name": "Joint EOQ Calculator",
@@ -76,6 +73,14 @@
       "category": "supplychain",
       "url": "/srctools/Forecast-ARIMA-Model/index.html",
       "description": "Dự báo chuỗi thời gian dựa trên mô hình Tự hồi quy Tích hợp Trung bình trượt (ARIMA)",
+      "premium": false
+    },
+    {
+      "id": "forecast-moving-average-model",
+      "name": "Forecast Moving Average Model",
+      "category": "supplychain",
+      "url": "/srctools/Forecast-Moving-Average-Model/index.html",
+      "description": "Dự báo chuỗi thời gian bằng phương pháp trung bình trượt đơn giản (Simple Moving Average)",
       "premium": false
     }
   ]
