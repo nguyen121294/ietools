@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,139 +27,148 @@
     </script>
 
     <!-- Google Font: Space Grotesk -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- MathJax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
+        async></script>
 
     <!-- Shared CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-<!-- HEADER -->
-<div id="header-placeholder"></div>
+    <!-- HEADER -->
+    <div id="header-placeholder"></div>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold tracking-tight">Joint EOQ – Đặt hàng chung nhiều mặt hàng</h1>
-        <p class="mt-2 text-slate-500 dark:text-slate-400">
-            Tính chu kỳ đặt hàng tối ưu, số lượng đặt mỗi mặt hàng và tổng chi phí khi nhiều mặt hàng được đặt chung một lần.
-        </p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- INPUT CARD -->
-        <div class="ie-card">
-            <h2 class="ie-card-title">Thông số đầu vào</h2>
-
-            <label class="ie-input-label">Chi phí đặt hàng chung mỗi lần (S)</label>
-            <input type="number" class="ie-input" id="S" placeholder="Ví dụ: 120000" min="0" step="1000" value="120000">
-
-            <label class="ie-input-label mt-4">Kỳ tính (thời gian của D và H)</label>
-            <select class="ie-input" id="period">
-                <option value="năm">Năm</option>
-                <option value="tháng">Tháng</option>
-            </select>
-
-            <div class="mt-6">
-                <label class="ie-input-label">Danh sách sản phẩm</label>
-                <div id="products-container" class="space-y-3"></div>
-
-                <button type="button" class="ie-button mt-4 w-full" onclick="addProduct()">
-                    + Thêm sản phẩm
-                </button>
-            </div>
-
-            <button class="ie-button w-full mt-6" onclick="calculate()">
-                Tính toán Joint EOQ
-            </button>
-
-            <div id="result" class="ie-result mt-6 text-lg"></div>
+        <div class="ie-page-header">
+            <h1 class="ie-page-title">Joint EOQ – Đặt hàng chung nhiều mặt hàng</h1>
+            <p class="ie-page-description">
+                Tính chu kỳ đặt hàng tối ưu, số lượng đặt mỗi mặt hàng và tổng chi phí khi nhiều mặt hàng được đặt chung
+                một lần.
+            </p>
         </div>
 
-        <!-- KẾT QUẢ & GIẢI THÍCH -->
-        <div class="lg:col-span-2 space-y-8">
+        <div class="ie-main-grid">
 
+            <!-- INPUT CARD -->
             <div class="ie-card">
-                <h3 class="ie-section-title">Joint EOQ là gì?</h3>
-                <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
-                    Mô hình tính toán số lượng đặt hàng kinh tế khi nhiều sản phẩm được đặt chung một lần để tiết kiệm chi phí đặt hàng. Giả định tất cả sản phẩm có cùng chu kỳ đặt hàng.
-                </p>
+                <h2 class="ie-card-title">Thông số đầu vào</h2>
+
+                <label class="ie-input-label">Chi phí đặt hàng chung mỗi lần (S)</label>
+                <input type="number" class="ie-input" id="S" placeholder="Ví dụ: 120000" min="0" step="1000"
+                    value="120000">
+
+                <label class="ie-input-label mt-4">Kỳ tính (thời gian của D và H)</label>
+                <select class="ie-input" id="period">
+                    <option value="năm">Năm</option>
+                    <option value="tháng">Tháng</option>
+                </select>
+
+                <div class="mt-6">
+                    <label class="ie-input-label">Danh sách sản phẩm</label>
+                    <div id="products-container" class="space-y-3"></div>
+
+                    <button type="button" class="ie-btn ie-btn-secondary mt-4 w-full" onclick="addProduct()">
+                        + Thêm sản phẩm
+                    </button>
+                </div>
+
+                <button class="ie-btn ie-btn-primary w-full mt-6" onclick="calculate()">
+                    Tính toán Joint EOQ
+                </button>
+
+                <div id="result" class="ie-result mt-6 text-lg"></div>
             </div>
 
-            <div class="ie-card">
-                <h3 class="ie-section-title">Công thức chính</h3>
-                <div class="space-y-4 text-sm">
-                    <div>
-                        <strong>Chu kỳ đặt hàng tối ưu:</strong>
-                        <div class="ie-formula mt-1">
-                            \[ T^* = \sqrt{\dfrac{2S}{\sum_{i=1}^n D_i H_i}} \]
-                        </div>
-                        (T* tính theo kỳ đã chọn: năm hoặc tháng)
-                    </div>
+            <!-- KẾT QUẢ & GIẢI THÍCH -->
+            <div class="lg:col-span-2 space-y-8">
 
-                    <div>
-                        <strong>Số lượng đặt hàng mỗi sản phẩm i:</strong>
-                        <div class="ie-formula mt-1">
-                            \[ Q_i^* = D_i \times T^* \]
-                        </div>
-                    </div>
-
-                    <div>
-                        <strong>Tổng chi phí tối ưu mỗi kỳ:</strong>
-                        <div class="ie-formula mt-1">
-                            \[ TC^* = \sqrt{2S \times \sum_{i=1}^n D_i H_i} \]
-                        </div>
-                        (Chi phí đặt hàng + chi phí lưu kho mỗi kỳ)
-                    </div>
-
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-4">
-                        Lưu ý: Tại điểm tối ưu, chi phí đặt hàng mỗi kỳ = chi phí lưu kho mỗi kỳ = \(\sqrt{\frac{S \sum D_i H_i}{2}}\)
+                <div class="ie-card">
+                    <h3 class="ie-section-title">Joint EOQ là gì?</h3>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Mô hình tính toán số lượng đặt hàng kinh tế khi nhiều sản phẩm được đặt chung một lần để tiết
+                        kiệm chi phí đặt hàng. Giả định tất cả sản phẩm có cùng chu kỳ đặt hàng.
                     </p>
                 </div>
-            </div>
 
-            <div id="detailed-results" class="space-y-6"></div>
+                <div class="ie-card">
+                    <h3 class="ie-section-title">Công thức chính</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <strong>Chu kỳ đặt hàng tối ưu:</strong>
+                            <div class="ie-formula mt-1">
+                                \[ T^* = \sqrt{\dfrac{2S}{\sum_{i=1}^n D_i H_i}} \]
+                            </div>
+                            (T* tính theo kỳ đã chọn: năm hoặc tháng)
+                        </div>
 
-            <div class="ie-card">
-                <h3 class="ie-section-title">Câu hỏi thường gặp</h3>
-                <div class="ie-faq space-y-3 mt-4">
-                    <details>
-                        <summary>Tại sao chi phí đặt hàng và chi phí lưu kho bằng nhau ở điểm tối ưu?</summary>
-                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                            Đây là đặc tính chung của các mô hình EOQ: tại điểm tối ưu, đạo hàm bằng 0 dẫn đến chi phí đặt hàng hàng năm = chi phí lưu kho hàng năm.
+                        <div>
+                            <strong>Số lượng đặt hàng mỗi sản phẩm i:</strong>
+                            <div class="ie-formula mt-1">
+                                \[ Q_i^* = D_i \times T^* \]
+                            </div>
+                        </div>
+
+                        <div>
+                            <strong>Tổng chi phí tối ưu mỗi kỳ:</strong>
+                            <div class="ie-formula mt-1">
+                                \[ TC^* = \sqrt{2S \times \sum_{i=1}^n D_i H_i} \]
+                            </div>
+                            (Chi phí đặt hàng + chi phí lưu kho mỗi kỳ)
+                        </div>
+
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-4">
+                            Lưu ý: Tại điểm tối ưu, chi phí đặt hàng mỗi kỳ = chi phí lưu kho mỗi kỳ = \(\sqrt{\frac{S
+                            \sum D_i H_i}{2}}\)
                         </p>
-                    </details>
-                    <details>
-                        <summary>Có thể dùng chu kỳ khác nhau cho từng mặt hàng không?</summary>
-                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                            Có, nhưng mô hình sẽ phức tạp hơn nhiều (gọi là Joint Replenishment Problem đầy đủ – JRP), thường cần thuật toán heuristic hoặc lập trình động.
-                            Phiên bản này chỉ tính trường hợp đơn giản nhất: cùng chu kỳ.
-                        </p>
-                    </details>
+                    </div>
                 </div>
+
+                <div id="detailed-results" class="space-y-6"></div>
+
+                <div class="ie-card">
+                    <h3 class="ie-section-title">Câu hỏi thường gặp</h3>
+                    <div class="ie-faq space-y-3 mt-4">
+                        <details>
+                            <summary>Tại sao chi phí đặt hàng và chi phí lưu kho bằng nhau ở điểm tối ưu?</summary>
+                            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                                Đây là đặc tính chung của các mô hình EOQ: tại điểm tối ưu, đạo hàm bằng 0 dẫn đến chi
+                                phí đặt hàng hàng năm = chi phí lưu kho hàng năm.
+                            </p>
+                        </details>
+                        <details>
+                            <summary>Có thể dùng chu kỳ khác nhau cho từng mặt hàng không?</summary>
+                            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                                Có, nhưng mô hình sẽ phức tạp hơn nhiều (gọi là Joint Replenishment Problem đầy đủ –
+                                JRP), thường cần thuật toán heuristic hoặc lập trình động.
+                                Phiên bản này chỉ tính trường hợp đơn giản nhất: cùng chu kỳ.
+                            </p>
+                        </details>
+                    </div>
+                </div>
+
             </div>
-
         </div>
-    </div>
 
-</main>
-<!-- FOOTER -->
-<div id="ie-footer"></div>
+    </main>
+    <!-- FOOTER -->
+    <div id="ie-footer"></div>
 
-<script src="/js/layout.js"></script>
-<script>
-    let productCount = 0;
+    <script src="/js/layout.js"></script>
+    <script>
+        let productCount = 0;
 
-    function addProduct() {
-        productCount++;
-        const container = document.getElementById('products-container');
-        const div = document.createElement('div');
-        div.className = 'grid grid-cols-2 gap-3 items-end';
-        div.innerHTML = `
+        function addProduct() {
+            productCount++;
+            const container = document.getElementById('products-container');
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-2 gap-3 items-end';
+            div.innerHTML = `
             <div>
                 <label class="ie-input-label">Sản phẩm ${productCount} - Demand (D)</label>
                 <input type="number" class="ie-input product-d" placeholder="Ví dụ: 5000" min="0" value="">
@@ -168,53 +178,53 @@
                 <input type="number" class="ie-input product-h" placeholder="Ví dụ: 240" min="0" value="">
             </div>
         `;
-        container.appendChild(div);
-    }
-
-    // Thêm ít nhất 1 sản phẩm khi load trang
-    window.onload = function() {
-        addProduct();
-        addProduct(); // Có thể thêm 2 mặc định nếu muốn
-    };
-
-    function calculate() {
-        const S = parseFloat(document.getElementById('S').value);
-        const period = document.getElementById('period').value;
-
-        if (!S || S <= 0) {
-            document.getElementById('result').innerHTML = "Vui lòng nhập chi phí đặt hàng S > 0";
-            document.getElementById('detailed-results').innerHTML = "";
-            return;
+            container.appendChild(div);
         }
 
-        const dInputs = document.querySelectorAll('.product-d');
-        const hInputs = document.querySelectorAll('.product-h');
+        // Thêm ít nhất 1 sản phẩm khi load trang
+        window.onload = function () {
+            addProduct();
+            addProduct(); // Có thể thêm 2 mặc định nếu muốn
+        };
 
-        let sumDH = 0;
-        let products = [];
+        function calculate() {
+            const S = parseFloat(document.getElementById('S').value);
+            const period = document.getElementById('period').value;
 
-        for (let i = 0; i < dInputs.length; i++) {
-            const D = parseFloat(dInputs[i].value);
-            const H = parseFloat(hInputs[i].value);
+            if (!S || S <= 0) {
+                document.getElementById('result').innerHTML = "Vui lòng nhập chi phí đặt hàng S > 0";
+                document.getElementById('detailed-results').innerHTML = "";
+                return;
+            }
 
-            if (isNaN(D) || isNaN(H) || D <= 0 || H <= 0) continue;
+            const dInputs = document.querySelectorAll('.product-d');
+            const hInputs = document.querySelectorAll('.product-h');
 
-            sumDH += D * H;
-            products.push({ index: i+1, D, H, Q: 0 });
-        }
+            let sumDH = 0;
+            let products = [];
 
-        if (products.length === 0) {
-            document.getElementById('result').innerHTML = "Vui lòng nhập ít nhất một sản phẩm hợp lệ";
-            return;
-        }
+            for (let i = 0; i < dInputs.length; i++) {
+                const D = parseFloat(dInputs[i].value);
+                const H = parseFloat(hInputs[i].value);
 
-        const T_star = Math.sqrt(2 * S / sumDH);
-        const TC_star = Math.ceil(Math.sqrt(2 * S * sumDH));
+                if (isNaN(D) || isNaN(H) || D <= 0 || H <= 0) continue;
 
-        let unit = period === 'năm' ? 'năm' : 'tháng';
-        let daysApprox = period === 'năm' ? Math.round(T_star * 365) : Math.round(T_star * 30);
+                sumDH += D * H;
+                products.push({ index: i + 1, D, H, Q: 0 });
+            }
 
-        let html = `
+            if (products.length === 0) {
+                document.getElementById('result').innerHTML = "Vui lòng nhập ít nhất một sản phẩm hợp lệ";
+                return;
+            }
+
+            const T_star = Math.sqrt(2 * S / sumDH);
+            const TC_star = Math.ceil(Math.sqrt(2 * S * sumDH));
+
+            let unit = period === 'năm' ? 'năm' : 'tháng';
+            let daysApprox = period === 'năm' ? Math.round(T_star * 365) : Math.round(T_star * 30);
+
+            let html = `
             <div class="ie-card">
                 <h3 class="ie-section-title text-xl">Kết quả tính toán (${unit})</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
@@ -235,7 +245,7 @@
 
                 <h4 class="font-semibold mt-6 mb-3">Chi tiết từng sản phẩm</h4>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left border-collapse">
+                    <table class="ie-table">
                         <thead class="bg-gray-100 dark:bg-gray-700">
                             <tr>
                                 <th class="px-4 py-2 border-b">Sản phẩm</th>
@@ -247,9 +257,9 @@
                         <tbody>
         `;
 
-        products.forEach(p => {
-            p.Q = p.D * T_star;
-            html += `
+            products.forEach(p => {
+                p.Q = p.D * T_star;
+                html += `
                 <tr class="border-b dark:border-gray-600">
                     <td class="px-4 py-2">Sản phẩm ${p.index}</td>
                     <td class="px-4 py-2">${p.D.toLocaleString('vi-VN')}</td>
@@ -257,18 +267,19 @@
                     <td class="px-4 py-2 font-medium">${Math.round(p.Q).toLocaleString('vi-VN')}</td>
                 </tr>
             `;
-        });
+            });
 
-        html += `</tbody></table></div></div>`;
+            html += `</tbody></table></div></div>`;
 
-        document.getElementById('result').innerHTML = `Đã tính xong cho ${products.length} sản phẩm`;
-        document.getElementById('detailed-results').innerHTML = html;
+            document.getElementById('result').innerHTML = `Đã tính xong cho ${products.length} sản phẩm`;
+            document.getElementById('detailed-results').innerHTML = html;
 
-        if (typeof MathJax !== 'undefined') MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    }
-</script>
+            if (typeof MathJax !== 'undefined') MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+    </script>
 
 
 
 </body>
+
 </html>

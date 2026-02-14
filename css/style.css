@@ -4,6 +4,30 @@
 
 body {
     font-family: 'Space Grotesk', sans-serif;
+    background-color: #101922;
+    /* Prevent white flash on load */
+    color: #f1f5f9;
+    /* Default text color */
+}
+
+/* Custom Backgrounds that might be missing from Tailwind config in some files */
+.bg-background-dark {
+    background-color: #101922;
+}
+
+.bg-background-light {
+    background-color: #f6f7f8;
+}
+
+/* =========================
+   HEADER SKELETON
+========================= */
+.ie-header-bg {
+    background-color: rgba(16, 25, 34, 0.9);
+    /* #101922 */
+    border-bottom: 1px solid #1f2937;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 /* =========================
@@ -11,15 +35,13 @@ body {
 ========================= */
 
 .ie-card {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(30, 41, 59, 1);
+    /* dark slate 800 */
+    border: 1px solid #1f2937;
+    /* gray 800 */
     border-radius: 0.75rem;
     padding: 1.5rem;
-}
-
-.dark .ie-card {
-    background: rgba(30, 41, 59, 0.4);
-    border-color: #1f2937;
+    color: #fff;
 }
 
 /* =========================
@@ -30,10 +52,6 @@ body {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #0f172a;
-}
-
-.dark .ie-card-title {
     color: #fff;
 }
 
@@ -52,10 +70,6 @@ body {
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
-    color: #475569;
-}
-
-.dark .ie-input-label {
     color: #cbd5f5;
 }
 
@@ -64,20 +78,15 @@ body {
     border-radius: 0.5rem;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
-    background: #f1f5f9;
-    border: 1px solid #e5e7eb;
-    outline: none;
-}
-
-.dark .ie-input {
     background: #020617;
-    border-color: #334155;
+    border: 1px solid #334155;
+    outline: none;
     color: white;
 }
 
 .ie-input:focus {
     border-color: #137fec;
-    box-shadow: 0 0 0 2px rgba(19,127,236,.25);
+    box-shadow: 0 0 0 2px rgba(19, 127, 236, .25);
 }
 
 /* =========================
@@ -120,17 +129,13 @@ body {
 ========================= */
 
 .ie-formula {
-    background: #f1f5f9;
-    border: 1px solid #e5e7eb;
+    background: #020617;
+    border: 1px solid #1f2937;
     border-radius: 0.5rem;
     padding: 1rem;
     font-family: monospace;
     font-size: 0.875rem;
-}
-
-.dark .ie-formula {
-    background: #020617;
-    border-color: #1f2937;
+    color: #cbd5e1;
 }
 
 /* =========================
@@ -138,12 +143,8 @@ body {
 ========================= */
 
 .ie-faq details {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #1f2937;
     padding: 0.75rem 0;
-}
-
-.dark .ie-faq details {
-    border-color: #1f2937;
 }
 
 .ie-faq summary {
@@ -153,37 +154,51 @@ body {
 
 
 /* Chỉnh cho chữ trong bảng Bold và Trắng trên nền tối */
-.ie-input-table { 
-    background: transparent; 
-    border: none; 
-    width: 100%; 
-    text-align: center; 
-    font-size: 0.875rem; 
-    font-weight: 700; /* Bold chữ */
-    color: #ffffff;   /* Chữ trắng */
-    text-align: center; /* Canh giữa chữ trong input */
+.ie-input-table {
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    /* Bold chữ */
+    color: #ffffff;
+    /* FFFFFF - Chữ trắng */
+    text-align: center;
+    /* Canh giữa chữ trong input */
 }
-.dark .ie-input-table { color: #ffffff; }
-.ie-input-table::placeholder { color: #64748b; font-weight: 400; }
+
+.ie-input-table::placeholder {
+    color: #64748b;
+    font-weight: 400;
+}
 
 /* Highlight header bảng */
-.task-table th { 
-    font-size: 0.75rem; 
-    color: #94a3b8; 
-    background: #1e293b; 
+.task-table th {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    background: #1e293b;
     border: 1px solid #334155;
     text-align: center;
     vertical-align: middle;
 }
-.task-table td { 
+
+.task-table td {
     border: 1px solid #334155;
     text-align: center;
     vertical-align: middle;
 }
 
 /* --- Bổ sung thêm cho CSS của bạn --- */
-.task-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-.task-table tr:hover { background: rgba(19, 127, 236, 0.05); }
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.task-table tr:hover {
+    background: rgba(19, 127, 236, 0.05);
+}
 
 /* Station Card Styling */
 .station-grid {
@@ -192,6 +207,7 @@ body {
     gap: 1rem;
     margin-top: 1.5rem;
 }
+
 .station-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
@@ -199,6 +215,173 @@ body {
     font-weight: 800;
     text-transform: uppercase;
 }
-.dark .ie-input-table { color: #ffffff !important; } /* Ép trắng trong darkmode */
 
 
+
+
+/* =========================
+   PAGE HEADER
+========================= */
+.ie-page-header {
+    margin-bottom: 2rem;
+}
+
+.ie-page-title {
+    font-size: 1.875rem;
+    /* text-3xl */
+    line-height: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    /* tracking-tight */
+    color: #fff;
+    /* Default white */
+}
+
+.ie-page-description {
+    margin-top: 0.5rem;
+    color: #94a3b8;
+    /* text-slate-400 */
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.ie-main-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .ie-main-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* =========================
+   BUTTON VARIANTS
+========================= */
+/* Base button style reuse .ie-button logic but make it a class that can be extended */
+.ie-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+    color: white;
+}
+
+.ie-btn-primary {
+    /* Default Blue */
+    background-color: #137fec;
+}
+
+.ie-btn-primary:hover {
+    background-color: #0f6ad1;
+}
+
+.ie-btn-success {
+    /* Emerald/Green */
+    background-color: #059669;
+    /* emerald-600 */
+}
+
+.ie-btn-success:hover {
+    background-color: #047857;
+}
+
+.ie-btn-warning {
+    /* Amber/Orange */
+    background-color: #d97706;
+    /* amber-600 */
+}
+
+.ie-btn-warning:hover {
+    background-color: #b45309;
+}
+
+.ie-btn-danger {
+    /* Red */
+    background-color: #dc2626;
+    /* red-600 */
+}
+
+.ie-btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+.ie-btn-secondary {
+    /* Slate/Gray */
+    background-color: #334155;
+    /* slate-700 */
+}
+
+.ie-btn-secondary:hover {
+    background-color: #475569;
+}
+
+
+/* =========================
+   TABLES
+========================= */
+.ie-table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.ie-table th {
+    padding: 0.75rem;
+    background-color: #1e293b;
+    /* slate-800 */
+    color: #94a3b8;
+    /* slate-400 */
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-bottom: 2px solid #334155;
+}
+
+.ie-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #334155;
+    color: #cbd5e1;
+    /* slate-300 */
+    font-size: 0.875rem;
+}
+
+/* =========================
+   NAV LINKS (for layout.js)
+========================= */
+.ie-nav-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.ie-nav-link.active {
+    color: #137fec;
+    /* primary */
+    border-bottom-width: 2px;
+    border-color: #137fec;
+}
+
+.ie-nav-link:not(.active) {
+    color: #94a3b8;
+    /* slate-400 */
+}
+
+.ie-nav-link:not(.active):hover {
+    color: #137fec;
+    /* hover:text-primary */
+}

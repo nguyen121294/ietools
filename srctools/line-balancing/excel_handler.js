@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Hệ thống khởi tạo...");
     const tbody = document.getElementById('taskBody');
     if (tbody) tbody.innerHTML = "";
-    
+
     const sampleData = [
-        {name: "Lắp bo mạch", time: 12, preds: "", compat: "2,3", machines: 1},
-        {name: "Bôi keo tản nhiệt", time: 8, preds: "1", compat: "1", machines: 1},
-        {name: "Gắn chip CPU", time: 10, preds: "1", compat: "1", machines: 1}
+        { name: "Lắp bo mạch", time: 12, preds: "", compat: "2,3", machines: 1 },
+        { name: "Bôi keo tản nhiệt", time: 8, preds: "1", compat: "1", machines: 1 },
+        { name: "Gắn chip CPU", time: 10, preds: "1", compat: "1", machines: 1 }
     ];
-    
+
     taskCount = 0;
     sampleData.forEach(data => addTask(data));
 });
@@ -25,26 +25,26 @@ function addTask(data = {}) {
 
     taskCount++;
     const row = document.createElement('tr');
-    row.className = "dark:bg-slate-900/40";
-    
+    // row.className = "dark:bg-slate-900/40";
+
     const initialTime = parseFloat(data.time) || 0;
     const initialMachines = parseInt(data.machines) || 1;
     const initialCT = (initialTime / initialMachines).toFixed(2);
 
     row.innerHTML = `
-        <td class="p-2 text-center font-bold text-[#137fec]">${taskCount}</td>
+        <td class="text-center font-bold text-[#137fec]">${taskCount}</td>
         <td><input type="text" class="ie-input-table task-name" value="${data.name || 'Task ' + taskCount}"></td>
         <td><input type="number" class="ie-input-table task-time" oninput="updateCT(this)" value="${initialTime}"></td>
         <td><input type="text" class="ie-input-table task-preds" value="${data.preds || ''}"></td>
         <td><input type="text" class="ie-input-table task-compat" value="${data.compat || ''}"></td>
         <td><input type="number" class="ie-input-table task-machines" oninput="updateCT(this)" value="${initialMachines}"></td>
-        <td class="p-2 text-center font-bold text-amber-500 task-ct">${initialCT}</td> 
-        <td class="p-2 text-center">
-            <button onclick="this.parentElement.parentElement.remove(); drawYamazumi();" class="text-red-500 font-bold">✕</button>
+        <td class="text-center font-bold text-amber-500 task-ct">${initialCT}</td> 
+        <td class="text-center">
+            <button onclick="this.parentElement.parentElement.remove(); drawYamazumi();" class="ie-btn ie-btn-danger px-2 py-1 text-xs">✕</button>
         </td>
     `;
     tbody.appendChild(row);
-    try { drawYamazumi(); } catch(e) { console.warn("Chưa thể vẽ biểu đồ:", e.message); }
+    try { drawYamazumi(); } catch (e) { console.warn("Chưa thể vẽ biểu đồ:", e.message); }
 }
 
 function updateCT(input) {
@@ -63,7 +63,7 @@ function drawYamazumi() {
     if (!canvas) return;
 
     const targetTakt = parseFloat(document.getElementById('targetTakt').value) || 0;
-    
+
     if (yamazumiChart) yamazumiChart.destroy();
 
     yamazumiChart = new Chart(canvas.getContext('2d'), {
@@ -112,19 +112,19 @@ function drawYamazumi() {
 
 // Xử lý Import Excel
 const excelInput = document.getElementById('excelFile');
-if(excelInput) {
+if (excelInput) {
     excelInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if(!file) return;
-        
+        if (!file) return;
+
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
                 const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
+                const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(firstSheet);
-                
+
                 document.getElementById('taskBody').innerHTML = "";
                 taskCount = 0;
 
@@ -149,7 +149,7 @@ if(excelInput) {
                 console.error("Lỗi đọc Excel:", err);
                 alert("Lỗi khi đọc file Excel. Vui lòng kiểm tra lại định dạng.");
             }
-            e.target.value = ""; 
+            e.target.value = "";
         };
         reader.readAsArrayBuffer(file);
     });
@@ -157,7 +157,7 @@ if(excelInput) {
 
 function downloadTemplate() {
     const ws = XLSX.utils.aoa_to_sheet([["ID", "Name", "Time", "Predecessors", "Compat_IDs", "Machines"]]);
-    const wb = XLSX.utils.book_new(); 
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Tasks");
     XLSX.writeFile(wb, "Line_Balancing_Template.xlsx");
 }
@@ -194,21 +194,21 @@ function prepareExcelData(result, title) {
     result.stations.forEach((s, i) => {
         const totalMachines = s.tasks.reduce((sum, t) => sum + t.machines, 0);
         data.push([
-            i + 1, 
-            s.tasks.map(t => `${t.name} (${t.machines}M)`).join(", "), 
-            s.load.toFixed(2), 
+            i + 1,
+            s.tasks.map(t => `${t.name} (${t.machines}M)`).join(", "),
+            s.load.toFixed(2),
             totalMachines
         ]);
     });
     return data;
 }
 
-function clearAll() { 
-    if(confirm("Xóa hết dữ liệu?")) { 
-        document.getElementById('taskBody').innerHTML = ""; 
-        taskCount = 0; 
-        if(yamazumiChart) yamazumiChart.destroy();
+function clearAll() {
+    if (confirm("Xóa hết dữ liệu?")) {
+        document.getElementById('taskBody').innerHTML = "";
+        taskCount = 0;
+        if (yamazumiChart) yamazumiChart.destroy();
         document.getElementById('resultsArea').innerHTML = "";
         document.getElementById('simulationArea').classList.add('hidden');
-    } 
+    }
 }

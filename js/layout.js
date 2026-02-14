@@ -11,14 +11,14 @@
 
 /* ========= ENFORCE BODY CLASS ========= */
 function enforceBodyClass() {
+  document.body.classList.remove("bg-background-light", "text-slate-900");
   document.body.classList.add(
-    "bg-background-light",
-    "dark:bg-background-dark",
-    "text-slate-900",
-    "dark:text-slate-100",
+    "bg-background-dark",
+    "text-slate-100",
     "min-h-screen",
     "font-display"
   );
+  document.documentElement.classList.add('dark');
 }
 
 /* ========= LOAD HEADER ========= */
@@ -78,13 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isActive =
         document.body.dataset.category === cat.id;
 
-      link.className = `
-        text-sm font-medium h-full flex items-center
-        transition-colors
-        ${isActive
-          ? "text-primary border-b-2 border-primary"
-          : "text-slate-600 dark:text-slate-400 hover:text-primary"}
-      `;
+      link.className = `ie-nav-link ${isActive ? "active" : ""}`;
 
       nav.appendChild(link);
     });

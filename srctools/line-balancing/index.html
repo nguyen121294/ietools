@@ -1,125 +1,156 @@
 <!DOCTYPE html>
 <html lang="vi" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Line Balancing PRO - IE System</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    
+
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
+        async></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-<div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
 
-    <div class="max-w-7xl mx-auto p-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight text-[#137fec]">LINE BALANCING PRO</h1>
-                <p class="mt-2 text-slate-500 dark:text-slate-400">Hệ thống tối ưu hóa năng suất & giả lập độ nhạy sản xuất</p>
+                <h1 class="ie-page-title text-[#137fec]">LINE BALANCING PRO</h1>
+                <p class="ie-page-description">Hệ thống tối ưu hóa năng suất & giả lập độ nhạy sản xuất</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="downloadTemplate()" class="ie-button bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded">Mẫu Excel</button>
-                <button onclick="document.getElementById('excelFile').click()" class="ie-button bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded">Import Excel</button>
+                <button onclick="downloadTemplate()" class="ie-btn ie-btn-success">Mẫu Excel</button>
+                <button onclick="document.getElementById('excelFile').click()" class="ie-btn ie-btn-warning">Import
+                    Excel</button>
                 <input type="file" id="excelFile" class="hidden" accept=".xlsx, .xls">
             </div>
         </div>
 
-        <div class="ie-card mb-6 bg-slate-800 p-6 rounded-xl border border-slate-700">
-            <h2 class="text-xl font-bold mb-4 text-white">Cấu hình Line</h2>
+        <div class="ie-card mb-6">
+            <h2 class="ie-card-title">Cấu hình Line</h2>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                    <label class="block text-xs uppercase opacity-60 mb-1 text-white">Takt Time mục tiêu (s)</label>
-                    <input type="number" id="targetTakt" class="ie-input w-full bg-slate-900 border border-slate-700 p-2 rounded text-white" value="10">
+                    <label class="ie-input-label">Takt Time mục tiêu (s)</label>
+                    <input type="number" id="targetTakt" class="ie-input" value="10">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase opacity-60 mb-1 text-white">Max Tasks / Trạm</label>
-                    <input type="number" id="maxTasks" class="ie-input w-full bg-slate-900 border border-slate-700 p-2 rounded text-white" value="10">
+                    <label class="ie-input-label">Max Tasks / Trạm</label>
+                    <input type="number" id="maxTasks" class="ie-input" value="10">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase opacity-60 mb-1 text-white">Thời gian 1 Ca (Phút)</label>
-                    <input type="number" id="shiftTime" class="ie-input w-full bg-slate-900 border border-slate-700 p-2 rounded text-white" value="480">
+                    <label class="ie-input-label">Thời gian 1 Ca (Phút)</label>
+                    <input type="number" id="shiftTime" class="ie-input" value="480">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase opacity-60 mb-1 text-white">Độ biến thiên σ (%)</label>
-                    <input type="number" id="sigma" class="ie-input w-full bg-slate-900 border border-slate-700 p-2 rounded text-white" value="10">
+                    <label class="ie-input-label">Độ biến thiên σ (%)</label>
+                    <input type="number" id="sigma" class="ie-input" value="10">
                 </div>
                 <div class="flex items-end">
-                    <button onclick="addTask()" class="ie-button w-full bg-[#137fec] hover:bg-blue-600 text-white py-2 rounded">+ Thêm Công việc</button>
+                    <button onclick="addTask()" class="ie-btn ie-btn-primary w-full">+ Thêm Công việc</button>
                 </div>
             </div>
         </div>
 
-        <div class="ie-card mb-8 overflow-hidden bg-slate-800 rounded-xl border border-slate-700">
+        <div class="ie-card mb-8 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-white">
-                    <thead class="bg-slate-900">
+                <table class="ie-table">
+                    <thead>
                         <tr>
-                            <th class="p-3">ID</th>
+                            <th>ID</th>
                             <th>Tên công việc</th>
                             <th>Thời gian (s)</th>
                             <th>ID Trước</th>
                             <th>ID Ghép</th>
                             <th>Số máy</th>
-                            <th class="text-amber-500">Cycle Time</th> 
-                            <th>Hành động</th>  
+                            <th class="text-amber-500">Cycle Time</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="taskBody"></tbody>
                 </table>
             </div>
-            
+
             <div class="p-6 flex flex-col md:flex-row gap-4 border-t border-slate-700">
-                <button onclick="runBalancing('fixed')" class="ie-button flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded font-bold">TÍNH THEO TAKT CỐ ĐỊNH</button>
-                <button onclick="runBalancing('auto')" class="ie-button flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded font-bold">TỰ ĐỘNG TỐI ƯU CÂN BẰNG</button>
-                <button id="btnExportResult" onclick="exportResultToExcel()" class="ie-button bg-green-700 hover:bg-green-800 text-white px-6 hidden rounded font-bold">XUẤT EXCEL</button>
-                <button onclick="clearAll()" class="ie-button bg-red-600 hover:bg-red-700 text-white px-6 rounded">Xóa hết</button>
+                <button onclick="runBalancing('fixed')" class="ie-btn ie-btn-secondary flex-1">TÍNH THEO TAKT CỐ
+                    ĐỊNH</button>
+                <button onclick="runBalancing('auto')"
+                    class="ie-btn border-2 border-indigo-600 bg-indigo-600 hover:bg-indigo-700 flex-1">TỰ ĐỘNG TỐI ƯU
+                    CÂN BẰNG</button>
+                <button id="btnExportResult" onclick="exportResultToExcel()" class="ie-btn ie-btn-success hidden">XUẤT
+                    EXCEL</button>
+                <button onclick="clearAll()" class="ie-btn ie-btn-danger">Xóa hết</button>
             </div>
         </div>
 
-        <div class="ie-card mb-8 bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <div class="ie-card mb-8">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-white mb-0">Biểu đồ Yamazumi (Hiện trạng)</h2>
-                <button onclick="drawYamazumi()" class="ie-button bg-purple-600 hover:bg-purple-700 text-white mt-0 px-4 py-1 rounded">Cập nhật biểu đồ</button>
+                <h2 class="ie-card-title mb-0">Biểu đồ Yamazumi (Hiện trạng)</h2>
+                <button onclick="drawYamazumi()"
+                    class="ie-button bg-purple-600 hover:bg-purple-700 text-white mt-0 px-4 py-1 rounded">Cập nhật biểu
+                    đồ</button>
             </div>
             <div class="h-[300px] w-full">
                 <canvas id="yamazumiChart"></canvas>
             </div>
         </div>
 
-        <div id="stationChartContainer" class="ie-card mb-8 bg-slate-800 p-6 rounded-xl border border-slate-700 hidden">
-            <h2 class="text-xl font-bold mb-4 text-emerald-400">Biểu đồ Tải trọng Trạm (Sau cân bằng)</h2>
+        <div id="stationChartContainer" class="ie-card mb-8 hidden">
+            <h2 class="ie-card-title mb-4 text-emerald-400">Biểu đồ Tải trọng Trạm (Sau cân bằng)</h2>
             <div class="h-[300px]">
                 <canvas id="stationChart"></canvas>
             </div>
         </div>
 
         <div id="resultsArea" class="space-y-8 pb-12"></div>
-        
+
         <div id="simulationArea" class="space-y-8 pb-20 hidden"></div>
 
         <div class="ie-card bg-slate-800/50 p-6 rounded-xl border border-slate-700/50 mb-12">
             <h2 class="text-xl font-bold mb-6 text-[#137fec] flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Hướng dẫn quy tắc nhập liệu (FAQ)
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
                 <div class="space-y-4">
                     <div>
                         <h4 class="font-bold text-amber-500 mb-1">1. Cột "ID Trước (Pred)" nhập thế nào?</h4>
-                        <p class="opacity-70">Nhập ID của công việc phải hoàn thành trước đó. Ví dụ: <code class="bg-slate-900 px-1 rounded">1,2</code>. Để trống nếu là công việc đầu tiên.</p>
+                        <p class="opacity-70">Nhập ID của công việc phải hoàn thành trước đó. Ví dụ: <code
+                                class="bg-slate-900 px-1 rounded">1,2</code>. Để trống nếu là công việc đầu tiên.</p>
                     </div>
                     <div>
                         <h4 class="font-bold text-amber-500 mb-1">2. Cột "ID Ghép Chung" là gì?</h4>
-                        <p class="opacity-70">Dùng để ràng buộc các công việc <strong>bắt buộc</strong> phải nằm trong cùng một trạm.</p>
+                        <p class="opacity-70">Dùng để ràng buộc các công việc <strong>bắt buộc</strong> phải nằm trong
+                            cùng một trạm.</p>
                     </div>
                 </div>
 
@@ -128,21 +159,26 @@
                         <h4 class="font-bold text-[#137fec] mb-1">3. Quy tắc điền "ID Ghép Chung":</h4>
                         <ul class="list-disc ml-4 space-y-2 opacity-70">
                             <li><strong>Để trống:</strong> Tự do. Hệ thống sẽ tự tối ưu vị trí.</li>
-                            <li><strong>Điền ID của nhau:</strong> (Ví dụ Task 1 điền "2", Task 2 điền "1"). Hai task này sẽ luôn chung trạm.</li>
-                            <li><strong>Điền chính ID của nó:</strong> (Ví dụ Task 5 điền "5"). Công việc này sẽ <strong>đứng biệt lập 1 mình</strong>.</li>
+                            <li><strong>Điền ID của nhau:</strong> (Ví dụ Task 1 điền "2", Task 2 điền "1"). Hai task
+                                này sẽ luôn chung trạm.</li>
+                            <li><strong>Điền chính ID của nó:</strong> (Ví dụ Task 5 điền "5"). Công việc này sẽ
+                                <strong>đứng biệt lập 1 mình</strong>.
+                            </li>
                         </ul>
                     </div>
                     <div>
                         <h4 class="font-bold text-[#137fec] mb-1">4. Chế độ Tự Động Tối Ưu?</h4>
-                        <p class="opacity-70">Hệ thống sẽ lấy Cycle Time lớn nhất (thời gian/số máy) làm Takt Time mục tiêu để tính toán.</p>
+                        <p class="opacity-70">Hệ thống sẽ lấy Cycle Time lớn nhất (thời gian/số máy) làm Takt Time mục
+                            tiêu để tính toán.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script src="/js/layout.js"></script>
-    <script src="balancing_logic.js"></script> 
+    <script src="balancing_logic.js"></script>
     <script src="excel_handler.js"></script>
 </body>
+
 </html>

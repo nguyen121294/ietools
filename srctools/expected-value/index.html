@@ -1,68 +1,75 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expected Value Calculator</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
 
-<header>
-    <h1>Expected Value Calculator</h1>
-</header>
+    <div id="header-placeholder"></div>
 
-<div class="container">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <div class="calculator-card">
-        <h2>Tính Expected Value (EV)</h2>
+        <div class="ie-page-header">
+            <h1 class="ie-page-title">Expected Value Calculator</h1>
+            <p class="ie-page-description">Tính giá trị kỳ vọng (EV) cho ra quyết định.</p>
+        </div>
 
-        <!-- DANH SÁCH CÁC DÒNG GIÁ TRỊ -->
-        <div id="rows">
+        <div class="ie-main-grid">
+            <div class="ie-card">
+                <h2 class="ie-card-title">Tính Expected Value (EV)</h2>
 
-            <!-- 1 dòng mẫu -->
-            <div class="input-group ev-row">
-                <label>Giá trị (x)</label>
-                <input type="number" class="value">
+                <!-- DANH SÁCH CÁC DÒNG GIÁ TRỊ -->
+                <div id="rows" class="space-y-4">
+                    <!-- 1 dòng mẫu -->
+                    <div class="ev-row grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="ie-input-label">Giá trị (x)</label>
+                            <input type="number" class="ie-input value">
+                        </div>
+                        <div>
+                            <label class="ie-input-label">Xác suất (p)</label>
+                            <input type="number" class="ie-input probability" step="0.01" min="0" max="1">
+                        </div>
+                    </div>
+                </div>
 
-                <label>Xác suất (p)</label>
-                <input type="number" class="probability" step="0.01" min="0" max="1">
+                <!-- NÚT THÊM DÒNG -->
+                <button id="addRow" class="ie-btn ie-btn-secondary w-full mt-4">+ Thêm giá trị</button>
+
+                <div id="result" class="ie-result mt-6">Expected Value: --</div>
             </div>
 
+            <div class="lg:col-span-2 ie-card">
+                <h2 class="ie-card-title">Expected Value là gì?</h2>
+                <p class="text-slate-600 dark:text-slate-300 mb-4">
+                    Expected Value (EV) là giá trị kỳ vọng của một quyết định,
+                    thường được dùng trong tài chính, đầu tư, trading và xác suất.
+                </p>
+
+                <div class="ie-formula text-center py-4">
+                    <p><strong>EV = Σ (x × p)</strong></p>
+                </div>
+
+                <h3 class="ie-section-title">Ví dụ</h3>
+                <p class="text-slate-600 dark:text-slate-300">
+                    Nếu bạn có 40% cơ hội lãi 100 và 60% cơ hội lỗ 50:
+                </p>
+                <p class="ie-formula mt-2">
+                    EV = 100 × 0.4 − 50 × 0.6 = 10
+                </p>
+            </div>
         </div>
+    </main>
 
-        <!-- NÚT THÊM DÒNG -->
-        <button id="addRow">+ Thêm giá trị</button>
+    <div id="ie-footer"></div>
+    <script src="/js/layout.js"></script>
 
-        <div id="result">Expected Value: --</div>
-    </div>
-
-    <div class="content">
-        <h2>Expected Value là gì?</h2>
-        <p>
-            Expected Value (EV) là giá trị kỳ vọng của một quyết định,
-            thường được dùng trong tài chính, đầu tư, trading và xác suất.
-        </p>
-
-        <div class="formula">
-            <p><strong>EV = Σ (x × p)</strong></p>
-        </div>
-
-        <h3>Ví dụ</h3>
-        <p>
-            Nếu bạn có 40% cơ hội lãi 100 và 60% cơ hội lỗ 50:
-        </p>
-        <p>
-            EV = 100 × 0.4 − 50 × 0.6 = 10
-        </p>
-    </div>
-
-</div>
-
-<footer>
-    <p>© 2026 - Expected Value Calculator</p>
-</footer>
-
-<script src="./calculator.js"></script>
+    <script src="./calculator.js"></script>
 </body>
+
 </html>
