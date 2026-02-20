@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valhalla Distance Matrix - Hướng dẫn Cài đặt & Sử dụng</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-placeholder"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <div class="ie-page-header">
+            <h1 class="ie-page-title">Valhalla Distance Matrix Local</h1>
+            <p class="ie-page-description">
+                Hướng dẫn cài đặt và chạy công cụ tính khoảng cách OSM trên máy cá nhân (chi tiết từng bước).
+            </p>
+        </div>
+
+        <div class="ie-main-grid">
+
+            <!-- 1. PREREQUISITES -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">1. Yêu cầu & Kiểm tra Môi trường</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-primary mb-2">Phần cứng</h3>
+                        <ul class="list-disc list-inside text-slate-300 space-y-1 text-sm">
+                            <li>RAM: Tối thiểu 4GB (Khuyến nghị 8GB)</li>
+                            <li>Disk: Tối thiểu 10GB trống (ổ D:)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-primary mb-2">Kiểm tra Docker</h3>
+                        <p class="text-sm text-slate-400 mb-2">Mở <strong>CMD</strong> (Command Prompt) và chạy lệnh sau
+                            để chắc chắn Docker đã cài:</p>
+                        <div class="ie-formula text-xs mb-2">
+                            docker --version
+                        </div>
+                        <p class="text-xs text-slate-500 italic">
+                            Kết quả cần hiện version (vd: Docker version 20.10...). Nếu lỗi, hãy cài Docker Desktop
+                            trước.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SETUP -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">2. Thiết lập Dữ liệu (Setup)</h2>
+                <p class="text-slate-400 mb-4 text-sm">
+                    Thực hiện chính xác các bước sau để chuẩn bị dữ liệu và build server.
+                </p>
+
+                <div class="space-y-6">
+                    <!-- Step 2.1: Folder -->
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 1</span>
+                            Tạo thư mục & Copy File Map
+                        </h3>
+                        <div class="bg-slate-900 p-4 rounded border border-slate-700 space-y-3">
+                            <p class="text-sm text-slate-300">
+                                1. Vào ổ <strong>D:\</strong> tạo thư mục tên: <code
+                                    class="text-white">valhalla-distance-matrix</code><br>
+                                2. Trong đó, tạo thêm thư mục con tên: <code class="text-white">data</code><br>
+                                3. Tải file bản đồ (PBF) và copy vào thư mục <code>data</code>.
+                            </p>
+                            <div class="ie-formula text-xs">
+                                D:\valhalla-distance-matrix\data\vietnam-latest.osm.pbf
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2.2: Commands -->
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 2</span>
+                            Chạy lệnh Build (Setup)
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-3">
+                            Mở <strong>CMD</strong>, chạy lần lượt <strong>3 lệnh</strong> sau (copy và paste từng
+                            lệnh):
+                        </p>
+
+                        <div class="space-y-4">
+                            <!-- Command 1 -->
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold mb-1">Lệnh 1: Tạo Config</p>
+                                <div
+                                    class="ie-formula overflow-x-auto text-xs break-all select-all cursor-text text-green-400 p-3">
+                                    docker run --rm -v "D:\valhalla-distance-matrix\data:/data"
+                                    ghcr.io/valhalla/valhalla:latest valhalla_build_config --mjolnir-tile-dir
+                                    /data/valhalla_tiles --mjolnir-tile-extract /data/valhalla_tiles.tar
+                                    --mjolnir-timezone /data/valhalla_tiles/timezones.sqlite --mjolnir-admin
+                                    /data/valhalla_tiles/admins.sqlite >
+                                    "D:\valhalla-distance-matrix\data\valhalla.json"
+                                </div>
+                            </div>
+
+                            <!-- Command 2 -->
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold mb-1">Lệnh 2: Build Tiles (Tốn vài
+                                    phút)</p>
+                                <div
+                                    class="ie-formula overflow-x-auto text-xs break-all select-all cursor-text text-green-400 p-3">
+                                    docker run -t --rm -v "D:\valhalla-distance-matrix\data:/data"
+                                    ghcr.io/valhalla/valhalla:latest valhalla_build_tiles -c /data/valhalla.json
+                                    /data/vietnam-latest.osm.pbf --overwrite
+                                </div>
+                            </div>
+
+                            <!-- Command 3 -->
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase font-bold mb-1">Lệnh 3: Đóng gói (Extract)
+                                </p>
+                                <div
+                                    class="ie-formula overflow-x-auto text-xs break-all select-all cursor-text text-green-400 p-3">
+                                    docker run -t --rm -v "D:\valhalla-distance-matrix\data:/data"
+                                    ghcr.io/valhalla/valhalla:latest valhalla_build_extract -c /data/valhalla.json
+                                    --overwrite
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. DEPLOY -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">3. Khởi chạy Ứng dụng (Deploy)</h2>
+                <div class="space-y-8">
+
+                    <!-- 3.1 Python Code -->
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 1</span>
+                            Tạo file App Code
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-3">
+                            Tạo file tên <code>app.py</code> tại <code>D:\valhalla-distance-matrix\</code> và copy toàn
+                            bộ nội dung code dưới đây vào:
+                        </p>
+
+                        <textarea
+                            class="ie-input w-full h-96 font-mono text-xs text-slate-300 bg-slate-900 border-slate-700 focus:border-primary"
+                            readonly onclick="this.select()">
+import streamlit as st
+import requests
+import json
+import pandas as pd
+
+# Cấu hình URL của Valhalla (đảm bảo Docker đang chạy)
+VALHALLA_URL = "http://localhost:8002/sources_to_targets"
+
+st.set_page_config(page_title="Valhalla Distance Matrix", layout="wide")
+
+st.title("🚀 Valhalla Local Distance Matrix")
+st.markdown("Nhập tọa độ để tính toán ma trận khoảng cách từ dữ liệu OSM nội bộ.")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("📍 Điểm bắt đầu (Sources)")
+    sources_input = st.text_area(
+        "Nhập Lat, Lon (mỗi dòng một điểm)", 
+        "21.0285, 105.8542",
+        help="Ví dụ: 21.0285, 105.8542",
+        key="sources"
+    )
+
+with col2:
+    st.subheader("🎯 Điểm kết thúc (Targets)")
+    targets_input = st.text_area(
+        "Nhập Lat, Lon (mỗi dòng một điểm)", 
+        "21.0368, 105.8346\n21.0245, 105.8412",
+        help="Ví dụ: 21.0368, 105.8346",
+        key="targets"
+    )
+
+def parse_coords(text):
+    coords = []
+    for line in text.strip().split('\n'):
+        if ',' in line:
+            lat, lon = line.split(',')
+            coords.append({"lat": float(lat.strip()), "lon": float(lon.strip())})
+    return coords
+
+if st.button("⚡ Tính toán Ma trận"):
+    try:
+        sources = parse_coords(sources_input)
+        targets = parse_coords(targets_input)
+        
+        # Tạo payload theo chuẩn Valhalla
+        payload = {
+            "sources": sources,
+            "targets": targets,
+            "costing": "auto",
+            "units": "kilometers"
+        }
+
+        # Gửi request đến Docker Valhalla
+        with st.spinner('Đang tính toán lộ trình...'):
+            response = requests.post(VALHALLA_URL, json=payload)
+            response.raise_for_status()
+            data = response.json()
+
+        results = []
+        for i, row in enumerate(data['sources_to_targets']):
+            for j, matrix_item in enumerate(row):
+                # Lấy giá trị an toàn, nếu không có thì để là None
+                dist = matrix_item.get('distance')
+                time_sec = matrix_item.get('time')
+
+                results.append({
+                    "Từ điểm (Index)": matrix_item['from_index'],
+                    "Đến điểm (Index)": matrix_item['to_index'],
+                    "Khoảng cách (km)": round(dist, 2) if dist is not None else "N/A",
+                    "Thời gian (phút)": round(time_sec / 60, 2) if time_sec is not None else "N/A"
+                })
+
+        df = pd.DataFrame(results)
+        st.success("✅ Đã tính toán xong!")
+        st.dataframe(df, use_container_width=True)
+        
+        # Cho phép tải về CSV
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("📥 Tải về kết quả CSV", csv, "distance_matrix.csv", "text/csv")
+
+    except Exception as e:
+        st.error(f"❌ Lỗi: {e}")
+        st.info("💡 Hãy đảm bảo Docker Valhalla đang chạy tại http://localhost:8002")
+                    </textarea>
+                        <p class="text-xs text-center text-slate-500 mt-2">
+                            (Nhấn vào code để bôi đen toàn bộ, sau đó Ctrl+C để copy)
+                        </p>
+                    </div>
+
+                    <!-- 3.2 Run Server -->
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 2</span>
+                            Bật Valhalla Server
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-3">
+                            Mở CMD và chạy lệnh sau (lưu ý: cửa sổ này cần giữ nguyên, không tắt):
+                        </p>
+                        <div
+                            class="ie-formula overflow-x-auto text-xs break-all select-all cursor-text text-green-400 p-3">
+                            docker run -i --name valhalla-server -p 8002:8002 -v
+                            "D:\valhalla-distance-matrix\data:/data" ghcr.io/valhalla/valhalla:latest valhalla_service
+                            /data/valhalla.json 1
+                        </div>
+                    </div>
+
+                    <!-- 3.3 Run App -->
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 3</span>
+                            Chạy Ứng dụng
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-3">
+                            Mở thêm một cửa sổ <strong>CMD Mới</strong>, và gõ lần lượt 3 lệnh sau:
+                        </p>
+                        <div class="space-y-2">
+                            <div class="ie-formula text-xs text-green-400 font-bold p-2">D:</div>
+                            <div class="ie-formula text-xs text-green-400 font-bold p-2">cd valhalla-distance-matrix
+                            </div>
+                            <div class="ie-formula text-xs text-green-400 font-bold p-2">streamlit run app.py</div>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-blue-900/20 border border-blue-800 rounded">
+                            <p class="text-xs text-blue-200 text-center">
+                                Nếu thành công, trình duyệt sẽ tự mở đường dẫn <strong>http://localhost:8501</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 4. USAGE -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">4. Hướng dẫn sử dụng App</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <!-- Input -->
+                    <div class="space-y-3">
+                        <h3 class="text-white font-semibold border-b border-slate-700 pb-2">1. Nhập Tọa Độ</h3>
+                        <p class="text-sm text-slate-400">
+                            Nhập danh sách tọa độ (Lat, Lon) vào hai ô Sources và Targets.
+                        </p>
+                        <div class="ie-formula text-xs">
+                            21.0285, 105.8542<br>
+                            21.0368, 105.8346
+                        </div>
+                    </div>
+
+                    <!-- Process -->
+                    <div class="space-y-3">
+                        <h3 class="text-white font-semibold border-b border-slate-700 pb-2">2. Xử Lý</h3>
+                        <p class="text-sm text-slate-400">
+                            Nhấn nút <strong>"Tính toán Ma trận"</strong>. App sẽ gọi API tới Local Valhalla.
+                        </p>
+                        <div class="p-3 bg-slate-900 rounded border border-slate-700">
+                            <code class="text-xs text-green-400">
+                            POST /sources_to_targets<br>
+                            ...
+                        </code>
+                        </div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="space-y-3">
+                        <h3 class="text-white font-semibold border-b border-slate-700 pb-2">3. Kết Quả</h3>
+                        <p class="text-sm text-slate-400">
+                            Xem kết quả Km và Thời gian trên bảng. Tải về CSV nếu cần.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <div id="ie-footer"></div>
+
+    <script src="/js/layout.js"></script>
+
+</body>
+
+</html>

@@ -24,6 +24,11 @@
       "id": "code",
       "name": "Code model",
       "url": "/categories/codemodel.html"
+    },
+    {
+      "id": "utility",
+      "name": "Utility",
+      "url": "/categories/utility.html"
     }
   ],
   "tools": [
@@ -81,6 +86,38 @@
       "category": "supplychain",
       "url": "/srctools/Forecast-Moving-Average-Model/index.html",
       "description": "Dự báo chuỗi thời gian bằng phương pháp trung bình trượt đơn giản (Simple Moving Average)",
+      "premium": false
+    },
+    {
+      "id": "distance-matrix-guide",
+      "name": "Local Distance Matrix Guide",
+      "category": "utility",
+      "url": "/srctools/distance-matrix-guide/index.html",
+      "description": "Hướng dẫn deploy và sử dụng Valhalla Distance Matrix Local",
+      "premium": false
+    },
+    {
+      "id": "geocode-sheets-guide",
+      "name": "Google Sheets Geocode Guide",
+      "category": "utility",
+      "url": "/srctools/geocode-sheets-guide/index.html",
+      "description": "Hướng dẫn sử dụng Apps Script để tìm tọa độ (lat, lng) trực tiếp trên Google Sheets",
+      "premium": false
+    },
+    {
+      "id": "vrp-visualizer",
+      "name": "VRP Route Visualizer",
+      "category": "supplychain",
+      "url": "/srctools/vrp-visualizer/index.html",
+      "description": "Công cụ vẽ và trực quan hóa kết quả bài toán VRP từ tọa độ số nguyên",
+      "premium": false
+    },
+    {
+      "id": "vrp-map-visualizer",
+      "name": "VRP Map Visualizer",
+      "category": "supplychain",
+      "url": "/srctools/vrp-map-visualizer/index.html",
+      "description": "Trực quan hóa lộ trình VRP trên bản đồ tương tác sử dụng kinh độ, vĩ độ",
       "premium": false
     }
   ]

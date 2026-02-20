@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Geocode - Hướng dẫn tìm tọa độ tự động</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-placeholder"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <div class="ie-page-header">
+            <h1 class="ie-page-title">Tìm kinh độ vĩ độ bằng google sheet</h1>
+            <p class="ie-page-description">
+                Sử dụng Google Apps Script để chuyển đổi địa chỉ thành tọa độ (Latitude, Longitude) ngay trong Google
+                Sheets.
+            </p>
+        </div>
+
+        <div class="ie-main-grid">
+
+            <!-- 1. SETUP APPS SCRIPT -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">1. Thiết lập Google Apps Script</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 1</span>
+                            Mở Trình chỉnh sửa Script
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-2">
+                            Mở Google Sheet của bạn, trên thanh menu chọn: <strong>Extensions</strong> (Tiện ích mở
+                            rộng) &rarr; <strong>Apps Script</strong>.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 2</span>
+                            Dán Mã Code Custom Function
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-3">
+                            Xóa hết các đoạn mã mặc định hiện có và dán đoạn mã dưới đây vào:
+                        </p>
+                        <textarea
+                            class="ie-input w-full h-64 font-mono text-xs text-slate-300 bg-slate-900 border-slate-700 focus:border-primary"
+                            readonly onclick="this.select()">
+/**
+ * Trả về latitude, longitude từ địa chỉ (dùng Google Maps Geocoder)
+ * @param {string} address Địa chỉ cần tìm
+ * @return {string} "lat, lng"
+ * @customfunction
+ */
+function GEOCODE(address) {
+  if (!address) return "No address";
+  
+  var response = Maps.newGeocoder().geocode(address);
+  var result = response.results[0];
+  
+  if (result) {
+    var lat = result.geometry.location.lat;
+    var lng = result.geometry.location.lng;
+    return lat + ", " + lng;
+  } else {
+    return "Not found";
+  }
+}
+                        </textarea>
+                        <p class="text-xs text-center text-slate-500 mt-2">
+                            (Nhấn vào code để bôi đen toàn bộ, sau đó Ctrl+C để copy)
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-semibold flex items-center gap-2 mb-2">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 3</span>
+                            Lưu và Đặt tên
+                        </h3>
+                        <p class="text-sm text-slate-400">
+                            Nhấn <strong>Ctrl + S</strong> (Save) &rarr; Đặt tên project (ví dụ: <code>Geocode</code>)
+                            &rarr; Đóng tab Apps Script lại.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. USAGE IN SHEET -->
+            <div class="ie-card lg:col-span-3">
+                <h2 class="ie-card-title">2. Sử dụng hàm trong Google Sheets</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h3
+                            class="text-white font-semibold border-b border-slate-700 pb-2 flex items-center gap-2 text-sm uppercase">
+                            <span class="bg-primary text-white text-xs px-2 py-0.5 rounded">BƯỚC 4</span>
+                            Sử dụng hàm GEOCODE
+                        </h3>
+                        <p class="text-sm text-slate-400">
+                            Giả sử địa chỉ nằm ở cột <strong>A</strong> (từ A2 trở đi), tại ô <strong>B2</strong> bạn
+                            gõ:
+                        </p>
+                        <div class="ie-formula text-sm bg-slate-900 border-slate-700 text-green-400">
+                            =GEOCODE(A2)
+                        </div>
+                        <p class="text-sm text-slate-400">
+                            Kéo công thức xuống dưới cho các dòng còn lại. Kết quả sẽ trả về định dạng:
+                            <code>10.7769, 106.7009</code>
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-white font-semibold border-b border-slate-700 pb-2 text-sm uppercase">Mẹo tách
+                            riêng LAT/LNG</h3>
+                        <p class="text-sm text-slate-400 italic">
+                            Nếu bạn muốn lấy riêng Latitude và Longitude vào hai cột khác nhau:
+                        </p>
+                        <ul class="text-sm text-slate-300 space-y-2 list-disc list-inside">
+                            <li>Cột B: <code class="text-green-400">=GEOCODE(A2)</code></li>
+                            <li>Dùng hàm <strong>SPLIT</strong> để tách: <br>
+                                <code class="text-green-400">=SPLIT(B2, ", ")</code>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. LIMITATIONS -->
+            <div class="ie-card lg:col-span-3 border-l-4 border-yellow-500/50">
+                <h2 class="ie-card-title flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                    Lưu ý về Quota (Hạn ngạch)
+                </h2>
+                <div class="text-sm text-slate-400 space-y-3">
+                    <p>
+                        Dịch vụ Geocoding của Google có giới hạn nhất định:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Tài khoản cá nhân: Khoảng <strong>1,000 requests/ngày</strong>.</li>
+                        <li>Nếu hết hạn ngạch, hàm sẽ báo lỗi hoặc không trả về kết quả. Bạn cần đợi đến ngày hôm sau để
+                            tiếp tục.</li>
+                        <li>Với dữ liệu lớn (>2000 dòng), bạn nên cân nhắc sử dụng Google Maps API có trả phí hoặc các
+                            dịch vụ OpenSource như Nominatim.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <div id="ie-footer"></div>
+
+    <script src="/js/layout.js"></script>
+
+</body>
+
+</html>
