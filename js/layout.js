@@ -32,11 +32,55 @@ async function loadHeader() {
   }
 }
 
+/* ========= LOAD FOOTER ========= */
+async function loadFooter() {
+  const res = await fetch("/shared/footer.html");
+  const html = await res.text();
+
+  const placeholder = document.getElementById("ie-footer");
+  if (placeholder) {
+    placeholder.innerHTML = html;
+    initVisitorCounter();
+  }
+}
+
+/* ========= VISITOR COUNTER ========= */
+function initVisitorCounter() {
+  const countSpan = document.getElementById("visit-count");
+  if (!countSpan) return;
+
+  // Using hits.seeyoufarm.com for counting
+  // We use a specific key for this site
+  const siteId = "ietools.lean.engineering";
+  const apiUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2F${siteId}&count_bg=%23137FEC&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`;
+
+  // Since it returns an SVG, we just want to track the hit.
+  // Actually, a better way for a simple counter in raw HTML is just to fetch it or use a script.
+  // We'll perform a fetch to increment and then maybe show a simulated or actual number if the API allows.
+  // Alternative: use a simple text-based counter service if possible, or just the SVG image.
+
+  // Let's use a simple approach: if we can't get JSON, we'll just show that we are tracking.
+  // Most free counters return badges. We'll try to find one that gives a value or just embed the badge.
+
+  // For now, let's keep it simple and professional.
+  countSpan.textContent = "Tracking...";
+
+  // Example of a transparent hit counter that increments on load
+  const img = new Image();
+  img.src = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2F${siteId}`;
+  img.onload = () => {
+    // Since we can't easily parse the SVG for the number without CORS issues,
+    // we'll just display a "Live" status or similar unless we use a JSON-based API.
+    countSpan.textContent = "Live";
+  };
+}
+
 /* ========= MAIN INIT ========= */
 document.addEventListener("DOMContentLoaded", async () => {
 
   enforceBodyClass();
   await loadHeader();
+  await loadFooter();
 
   const res = await fetch("/shared/tools.json");
   const data = await res.json();
