@@ -119,6 +119,13 @@
       "url": "/srctools/vrp-map-visualizer/index.html",
       "description": "Trực quan hóa lộ trình VRP trên bản đồ tương tác sử dụng kinh độ, vĩ độ",
       "premium": false
+    },
+    {
+      "id": "cycle-time-capability",
+      "name": "Đo năng suất bằng xác suất",
+      "description": "Bấm giờ hiện trường & Phân tích năng lực quy trình (Cp/Cpk).",
+      "category": "productivity",
+      "url": "/srctools/cycle-time-capability/index.html"
     }
   ]
 }
